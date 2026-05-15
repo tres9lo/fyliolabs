@@ -1,0 +1,139 @@
+{
+  "app": {
+    "name": "Fyliolabs"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "create": "Create",
+    "upload": "Upload",
+    "download": "Download",
+    "loading": "Loading...",
+    "settings": "Settings",
+    "dashboard": "Dashboard",
+    "files": "Files",
+    "folders": "Folders",
+    "search": "Search",
+    "signOut": "Sign out",
+    "noFolder": "Root (no folder)",
+    "newFolder": "New Folder",
+    "editFolder": "Edit Folder",
+    "deleteFolder": "Delete folder?",
+    "deleteConfirm": "This will permanently delete \"{name}\" and all its children. This action cannot be undone.",
+    "folderName": "Folder Name",
+    "description": "Description (optional)",
+    "createFolder": "Create",
+    "name": "Name",
+    "public": "Public"
+  },
+  "auth": {
+    "loginTitle": "Welcome back",
+    "loginSubtitle": "Sign in to your account to continue",
+    "signIn": "Sign in",
+    "emailLabel": "Email",
+    "passwordLabel": "Password",
+    "noAccount": "Don't have an account?",
+    "createAccount": "Create one",
+    "registerTitle": "Create an account",
+    "registerSubtitle": "Join Fyliolabs and start managing your files",
+    "haveAccount": "Already have an account?",
+    "signInLink": "Sign in",
+    "fullName": "Full Name"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "subtitle": "Manage your files and folders",
+    "totalFiles": "Total Files",
+    "totalFolders": "Total Folders",
+    "storageUsed": "Storage Used",
+    "quickStart": "Quick Start",
+    "getStarted": "Get started with Fyliolabs",
+    "step1": "1. Configure Cloudinary",
+    "step1Desc": "Set up your Cloudinary credentials in settings to enable file uploads.",
+    "step2": "2. Create Your First Folder",
+    "step2Desc": "Organize your files by creating folders.",
+    "step3": "3. Upload Files",
+    "step3Desc": "Drag and drop files to upload them to Cloudinary."
+  },
+  "settings": {
+    "title": "Settings",
+    "subtitle": "Manage your account and preferences",
+    "profileSettings": "Profile Settings",
+    "basicInfo": "Basic Information",
+    "fullName": "Full Name",
+    "avatarUrl": "Avatar URL",
+    "cloudinary": "Cloudinary Integration",
+    "cloudName": "Cloud Name",
+    "apiKey": "API Key",
+    "apiSecret": "API Secret",
+    "secure": "Use HTTPS for Cloudinary URLs",
+    "resetForm": "Reset Form",
+    "saveChanges": "Save Changes",
+    "warning": "Your Cloudinary credentials are stored securely, never exposed to the browser."
+  },
+  "files": {
+    "title": "Files",
+    "subtitle": "Upload and manage your files",
+    "uploadLabel": "Upload to folder (optional)",
+    "uploadZonePrompt": "Drag & drop a file here, or click to select",
+    "uploadZoneLimit": "Max size 100MB. Images, videos, audio, documents supported.",
+    "yourFiles": "Your Files",
+    "noFiles": "No files uploaded yet"
+  },
+  "folders": {
+    "title": "Folders",
+    "subtitle": "Organize your files into nested folders",
+    "noFolders": "No folders yet. Create your first folder to organize your files.",
+    "yourFolders": "Your Folders",
+    "createFolder": "Create Folder",
+    "editFolder": "Edit Folder",
+    "deleteFolder": "Delete folder?",
+    "deleteConfirm": "This will permanently delete \"{name}\" and all its children. This action cannot be undone."
+  },
+  "search": {
+    "title": "Search",
+    "subtitle": "Find files by name, description, or tags",
+    "searchPlaceholder": "Search files...",
+    "tagsLabel": "Tags (comma separated)",
+    "tagsPlaceholder": "tag1, tag2",
+    "searchButton": "Search",
+    "resetButton": "Reset",
+    "results": "Results ({count})",
+    "noResults": "No files found"
+  },
+  "fileDetail": {
+    "title": "File Details",
+    "metadata": "Metadata",
+    "size": "Size",
+    "type": "Type",
+    "dimensions": "Dimensions",
+    "mime": "MIME",
+    "created": "Created",
+    "viewOriginal": "View original",
+    "convertFile": "Convert File",
+    "conversion": "Conversion",
+    "public": "Public"
+  },
+  "toast": {
+    "success": "Success",
+    "error": "Error",
+    "uploaded": "Uploaded"
+  },
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "files": "Files",
+    "folders": "Folders",
+    "search": "Search",
+    "settings": "Settings"
+  },
+  "topbar": {
+    "dashboard": "Dashboard",
+    "welcomeBack": "Welcome back"
+  },
+  "footer": {
+    "copyright": "© {year} {app}. All rights reserved.",
+    "rights": "All rights reserved."
+  }
+}

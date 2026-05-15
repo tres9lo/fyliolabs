@@ -1,0 +1,134 @@
+{
+  "app": { "name": "Fyliolabs" },
+  "common": {
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "edit": "Modifier",
+    "create": "Créer",
+    "upload": "Télécharger",
+    "download": "Télécharger",
+    "loading": "Chargement...",
+    "settings": "Paramètres",
+    "dashboard": "Tableau de bord",
+    "files": "Fichiers",
+    "folders": "Dossiers",
+    "search": "Rechercher",
+    "signOut": "Se déconnecter",
+    "noFolder": "Racine (aucun dossier)",
+    "newFolder": "Nouveau dossier",
+    "editFolder": "Modifier le dossier",
+    "deleteFolder": "Supprimer le dossier ?",
+    "deleteConfirm": "Ceci supprimera définitivement \"{name}\" et tous ses enfants. Cette action est irréversible.",
+    "folderName": "Nom du dossier",
+    "description": "Description (optionnel)",
+    "createFolder": "Créer"
+  },
+  "auth": {
+    "loginTitle": "Bon retour",
+    "loginSubtitle": "Connectez-vous à votre compte pour continuer",
+    "signIn": "Se connecter",
+    "emailLabel": "Email",
+    "passwordLabel": "Mot de passe",
+    "noAccount": "Pas de compte ?",
+    "createAccount": "Créer un compte",
+    "registerTitle": "Créer un compte",
+    "registerSubtitle": "Rejoignez Fyliolabs et commencez à gérer vos fichiers",
+    "haveAccount": "Vous avez déjà un compte ?",
+    "signInLink": "Se connecter",
+    "fullName": "Nom complet"
+  },
+  "dashboard": {
+    "title": "Tableau de bord",
+    "subtitle": "Gérez vos fichiers et dossiers",
+    "totalFiles": "Total des fichiers",
+    "totalFolders": "Total des dossiers",
+    "storageUsed": "Espace utilisé",
+    "quickStart": "Démarrage rapide",
+    "getStarted": "Commencez avec Fyliolabs",
+    "step1": "1. Configurer Cloudinary",
+    "step1Desc": "Ajoutez vos identifiants Cloudinary dans les paramètres pour activer les téléchargements.",
+    "step2": "2. Créer votre premier dossier",
+    "step2Desc": "Organisez vos fichiers en créant des dossiers.",
+    "step3": "3. Télécharger des fichiers",
+    "step3Desc": "Glissez-déposez des fichiers pour les télécharger sur Cloudinary."
+  },
+  "settings": {
+    "title": "Paramètres",
+    "subtitle": "Gérez votre compte et préférences",
+    "profileSettings": "Paramètres du profil",
+    "basicInfo": "Informations de base",
+    "fullName": "Nom complet",
+    "avatarUrl": "URL de l'avatar",
+    "cloudinary": "Intégration Cloudinary",
+    "cloudName": "Nom du cloud",
+    "apiKey": "Clé API",
+    "apiSecret": "Clé secrète API",
+    "secure": "Utiliser HTTPS pour les URLs Cloudinary",
+    "resetForm": "Réinitialiser le formulaire",
+    "saveChanges": "Enregistrer les modifications",
+    "warning": "Vos identifiants Cloudinary sont stockés de manière sécurisée, jamais exposés au navigateur."
+  },
+  "files": {
+    "title": "Fichiers",
+    "subtitle": "Téléchargez et gérez vos fichiers",
+    "uploadLabel": "Télécharger dans un dossier (optionnel)",
+    "uploadZonePrompt": "Glissez-déposez un fichier ici, ou cliquez pour sélectionner",
+    "uploadZoneLimit": "Taille max 100MB. Images, vidéos, audio, documents acceptés.",
+    "yourFiles": "Vos fichiers",
+    "noFiles": "Aucun fichier téléchargé"
+  },
+  "folders": {
+    "title": "Dossiers",
+    "subtitle": "Organisez vos fichiers en dossiers imbriqués",
+    "noFolders": "Aucun dossier. Créez votre premier dossier pour organiser vos fichiers.",
+    "yourFolders": "Vos dossiers",
+    "createFolder": "Créer un dossier",
+    "editFolder": "Modifier le dossier",
+    "deleteFolder": "Supprimer le dossier ?",
+    "deleteConfirm": "Ceci supprimera définitivement \"{name}\" et tous ses enfants. Cette action est irréversible."
+  },
+  "search": {
+    "title": "Rechercher",
+    "subtitle": "Trouvez des fichiers par nom, description ou tags",
+    "searchPlaceholder": "Rechercher des fichiers...",
+    "tagsLabel": "Tags (séparés par des virgules)",
+    "tagsPlaceholder": "tag1, tag2",
+    "searchButton": "Rechercher",
+    "resetButton": "Réinitialiser",
+    "results": "Résultats ({count})",
+    "noResults": "Aucun fichier trouvé"
+  },
+  "fileDetail": {
+    "title": "Détails du fichier",
+    "metadata": "Métadonnées",
+    "size": "Taille",
+    "type": "Type",
+    "dimensions": "Dimensions",
+    "mime": "MIME",
+    "created": "Créé",
+    "viewOriginal": "Voir l'original",
+    "convertFile": "Convertir le fichier",
+    "conversion": "Conversion",
+    "public": "Public"
+  },
+  "toast": {
+    "success": "Succès",
+    "error": "Erreur",
+    "uploaded": "Téléchargé"
+  },
+  "sidebar": {
+    "dashboard": "Tableau de bord",
+    "files": "Fichiers",
+    "folders": "Dossiers",
+    "search": "Rechercher",
+    "settings": "Paramètres"
+  },
+  "topbar": {
+    "dashboard": "Tableau de bord",
+    "welcomeBack": "Bon retour"
+  },
+  "footer": {
+    "copyright": "© {year} {app}. Tous droits réservés."
+  }
+}

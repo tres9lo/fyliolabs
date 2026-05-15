@@ -1,0 +1,131 @@
+{
+  "app": { "name": "Fyliolabs" },
+  "common": {
+    "save": "Hifadhi",
+    "cancel": "Ghairi",
+    "delete": "Futa",
+    "edit": "Hariri",
+    "create": "Unda",
+    "upload": "Pakia",
+    "download": "Pakua",
+    "loading": "Inapakia...",
+    "settings": "Mipangilio",
+    "dashboard": "Dashibodi",
+    "files": "Faili",
+    "folders": "Folda",
+    "search": "Tafuta",
+    "signOut": "Toka",
+    "noFolder": "Muu (bila folda)",
+    "newFolder": "Folda Mpya",
+    "editFolder": "Hariri Folda",
+    "deleteFolder": "Futa folda?",
+    "deleteConfirm": "Hii itafuta \"{name}\" na watoto wake kwa sababu. Hii haiwezi kutekelezwa.",
+    "folderName": "Jina la Folda",
+    "description": "Maelezo (kuchagua)",
+    "createFolder": "Unda"
+  },
+  "auth": {
+    "loginTitle": "Karibu tena",
+    "loginSubtitle": "Ingia kwenye akaunti yako kuendelea",
+    "signIn": "Ingia",
+    "noAccount": "Una akaunti?",
+    "createAccount": " Tengeneza moja",
+    "registerTitle": "Tengeneza akaunti",
+    "registerSubtitle": "Jiunge na Fyliolabs na anza kudhibiti faili zako",
+    "haveAccount": "Tayari una akaunti?",
+    "signInLink": "Ingia"
+  },
+  "dashboard": {
+    "title": "Dashibodi",
+    "subtitle": "Dhibiti faili na folda zako",
+    "totalFiles": "Jumla ya Faili",
+    "totalFolders": "Jumla ya Folder",
+    "storageUsed": "Hifadhi Inayotumika",
+    "quickStart": "Anza kwa Haraka",
+    "getStarted": "Anza na Fyliolabs",
+    "step1": "1. Sanidi Cloudinary",
+    "step1Desc": "Sanidi maelezo yako ya Cloudinary kwenye mipangilio ili kuwezesha upakuaji.",
+    "step2": "2. Tengeneza Folda Yako La Kwanza",
+    "step2Desc": "Panga faili zako kwa kuunda folda.",
+    "step3": "3. Faili za Upakuaji",
+    "step3Desc": "Buruza na kuacha faili zipakue kwenye Cloudinary."
+  },
+  "settings": {
+    "title": "Mipangilio",
+    "subtitle": "Dhibiti akaunti yako na mapendeleo",
+    "profileSettings": "Mipangilio ya Nafasi",
+    "basicInfo": "Taarifa za Msingi",
+    "fullName": "JinaKamili",
+    "avatarUrl": "URL ya Picha",
+    "cloudinary": "Ufuatiliaji wa Cloudinary",
+    "cloudName": "Jina la Wingu",
+    "apiKey": "Kifaa cha API",
+    "apiSecret": "Siri ya API",
+    "secure": "Tumia HTTPS kwa URL za Cloudinary",
+    "resetForm": "Weka upya fomu",
+    "saveChanges": "Hifadhi Mabadiliko",
+    "warning": "Yahusi yako ya Cloudinary huhifadhiwa kwa usalama, haitokezi kwenye kivinjari."
+  },
+  "files": {
+    "title": "Faili",
+    "subtitle": "Pakia na дhabiti faili zako",
+    "uploadLabel": "Pakia kwenye folda (kuchagua)",
+    "uploadZonePrompt": "Buruza na kuacha faili hapa, au bofya kuchagua",
+    "uploadZoneLimit": "Saizi ya juu 100MB. Picha, video, sauti, waraka vinatumika.",
+    "yourFiles": "Faili Zako",
+    "noFiles": "Hakuna faili zilizopakiwa"
+  },
+  "folders": {
+    "title": "Folda",
+    "subtitle": "Panga faili zako kwenye folda",
+    "noFolders": "Hakuna folda bado. Tengeneza folda yako ya kwanza ili kupanga faili.",
+    "yourFolders": "Folda Zako",
+    "createFolder": "Unda Folda",
+    "editFolder": "Hariri Folda",
+    "deleteFolder": "Futa folda?",
+    "deleteConfirm": "Hii itafuta \"{name}\" na watoto wake kwa sasababu. Hatutakuwezesha kurejesha."
+  },
+  "search": {
+    "title": "Tafuta",
+    "subtitle": "Pata faili kwa jina, maelezo, au lebo",
+    "searchPlaceholder": "Tafuta faili...",
+    "tagsLabel": "Lebo (tenganisha kwa koma)",
+    "tagsPlaceholder": "lebo1, lebo2",
+    "searchButton": "Tafuta",
+    "resetButton": "Weka upya",
+    "results": "Matokeo ({count})",
+    "noResults": "Hakuna faili zilizopatikana"
+  },
+  "fileDetail": {
+    "title": "Maelezo ya Faili",
+    "metadata": "Maelezo ya Ziada",
+    "size": "Saizi",
+    "type": "Aina",
+    "dimensions": "Mipaka",
+    "mime": "MIME",
+    "created": "Imeundwa",
+    "viewOriginal": "Tazama asili",
+    "convertFile": "Badilisha Faili",
+    "conversion": "Ubadilishaji",
+    "public": "Hadhi"
+  },
+  "toast": {
+    "success": "Mafanikio",
+    "error": "Hitilafu",
+    "uploaded": "Imepakiwa"
+  },
+  "sidebar": {
+    "dashboard": "Dashibodi",
+    "files": "Faili",
+    "folders": "Folda",
+    "search": "Tafuta",
+    "settings": "Mipangilio"
+  },
+  "topbar": {
+    "dashboard": "Dashibodi",
+    "welcomeBack": "Karibu tena"
+  },
+  "footer": {
+    "copyright": "© {year} {app}. Haki zote zimehifadhiwa."
+  }
+}

@@ -1,0 +1,131 @@
+{
+  "app": { "name": "Fyliolabs" },
+  "common": {
+    "save": "Bika",
+    "cancel": "Kureka",
+    "delete": "Siba",
+    "edit": "Hindura",
+    "create": "Kora",
+    "upload": "Iyandika",
+    "download": "Iyimura",
+    "loading": "Kirimo...",
+    "settings": "Ibigaruriko",
+    "dashboard": "Ibimenyetso",
+    "files": "Ibisanduku",
+    "folders": "Indango",
+    "search": "Shaka",
+    "signOut": "Sohoka",
+    "noFolder": "Umurongo (nta ndango)",
+    "newFolder": "Indango Nshya",
+    "editFolder": "Hindura Indango",
+    "deleteFolder": "Siba indango?",
+    "deleteConfirm": "Ibi bizosiba \"{name}\" n'ibyo birimo. Iki calculate si irements.",
+    "folderName": "Izina ry'indango",
+    "description": "Umwinzure (ntibuzima)",
+    "createFolder": "Kora"
+  },
+  "auth": {
+    "loginTitle": "Kanguka neza",
+    "loginSubtitle": "Kora login kugira usohoke",
+    "signIn": "Kora login",
+    "noAccount": "Nta konti ufite?",
+    "createAccount": "Kora yawe",
+    "registerTitle": "Kora konti",
+    "registerSubtitle": "Shyire hamwe na Fyliolabs utegure guharanira ibyangombwa",
+    "haveAccount": "Wari utekereje ko wafite konti?",
+    "signInLink": "Kora login"
+  },
+  "dashboard": {
+    "title": "Ibimenyetso",
+    "subtitle": "Reba ibyangombwa na za milango",
+    "totalFiles": "Yose Ibyangombwa",
+    "totalFolders": "Yose Indango",
+    "storageUsed": "Storage Ukoresha",
+    "quickStart": "Tangira vuba",
+    "getStarted": "Tangira na Fyliolabs",
+    "step1": "1. Tunganya Cloudinary",
+    "step1Desc": "Tereza amakuru ya Cloudinary kugira ushobore kohereza.",
+    "step2": "2. Kora Indango Y'Itandukaniro",
+    "step2Desc": "Tegura ibyangombwa ukora indango.",
+    "step3": "3. Ubyohereza",
+    "step3Desc": "Kanda uhekeshe ibyangombwa kugira bijyane Cloudinary."
+  },
+  "settings": {
+    "title": "Ibigaruriko",
+    "subtitle": "Kora amajando yawe",
+    "profileSettings": "Ibigaruriko by'Umwirondoro",
+    "basicInfo": "Ubusobanuro bw'ibanze",
+    "fullName": "Izina ry'umwirondoro",
+    "avatarUrl": "URL y'ishusho",
+    "cloudinary": "Guhuza Cloudinary",
+    "cloudName": "Izina ry'ibitunguru",
+    "apiKey": "Umfunguzo wa API",
+    "apiSecret": "Iyiheka rya API",
+    "secure": "Koresha HTTPS kuri Cloudinary",
+    "resetForm": "Kongera gushyiraho form",
+    "saveChanges": "Bika Amahinduka",
+    "warning": "Ubusobanuro bwa Cloudinary buruhariwe, ntibushobora kugaragara."
+  },
+  "files": {
+    "title": "Ibisanduku",
+    "subtitle": "Iyandika no kudobanura",
+    "uploadLabel": "Iyandika mu ndango (kutagomba)",
+    "uploadZonePrompt": "Kanda uhekeshe hano, canke usubiremo",
+    "uploadZoneLimit": "Ingano ntare 100MB. Kugenda, video, audio, inyandiko.",
+    "yourFiles": "Ibisanduku vyawe",
+    "noFiles": "Nta bisanduku vyiyandikisha"
+  },
+  "folders": {
+    "title": "Indango",
+    "subtitle": "Shyira ibyangombwa mu ndango",
+    "noFolders": "Nta ndango iri. Kora indango y'ubundi upange ibyangombwa",
+    "yourFolders": "Indango Yawe",
+    "createFolder": "Kora Indango",
+    "editFolder": "Hindura Indango",
+    "deleteFolder": "Siba indango?",
+    "deleteConfirm": "Ibi bizosiba \"{name}\" n'ibyo birimo. Iki calculate si. No recovery."
+  },
+  "search": {
+    "title": "Shaka",
+    "subtitle": "Shaka ibyangombwa ku ijina, umusaruro, canke amatwazi",
+    "searchPlaceholder": "Shaka ibyangombwa...",
+    "tagsLabel": "Amatwazi (tandanya na uko)",
+    "tagsPlaceholder": "tw1, tw2",
+    "searchButton": "Shaka",
+    "resetButton": "Subirana",
+    "results": "Inkurabuko ({count})",
+    "noResults": "Ntibiboneke ibyangombwa"
+  },
+  "fileDetail": {
+    "title": "Ubusobanuro bw'Ibisanduku",
+    "metadata": "Ubusobanuro",
+    "size": "Ingano",
+    "type": "Ubwoko",
+    "dimensions": "Ingano",
+    "mime": "MIME",
+    "created": "Yaremwe",
+    "viewOriginal": "Reba asanifu",
+    "convertFile": "Hindura",
+    "conversion": "Guhindura",
+    "public": "Mbuguzi"
+  },
+  "toast": {
+    "success": "Guhenda",
+    "error": "Ikibazo",
+    "uploaded": "Iyanditswe"
+  },
+  "sidebar": {
+    "dashboard": "Ibimenyetso",
+    "files": "Ibisanduku",
+    "folders": "Indango",
+    "search": "Shaka",
+    "settings": "Ibigaruriko"
+  },
+  "topbar": {
+    "dashboard": "Ibimenyetso",
+    "welcomeBack": "Wagaruke neza"
+  },
+  "footer": {
+    "copyright": "© {year} {app}. Uburenganzira bwose bufatiriwe."
+  }
+}
