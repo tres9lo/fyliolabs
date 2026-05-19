@@ -15,15 +15,16 @@ import {
   Sparkles,
   Bold,
   Italic,
-  Heading,
   List,
-  Link2,
-  Table2,
-  CheckSquare,
   BookOpen,
-  Eye,
   AlignLeft,
   Paintbrush,
+  Underline,
+  AlignCenter,
+  AlignRight,
+  AlignJustify,
+  ListOrdered,
+  Eraser,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTranslations } from "next-intl";
@@ -53,13 +54,14 @@ export default function EditorPage() {
   // Dual Editor Modes
   const [editorMode, setEditorMode] = useState<EditorMode>("document");
   
-  // Document-specific: Markdown split-pane preview
-  const [showSplitPreview, setShowSplitPreview] = useState(false);
-  
   // Code-specific: Themes
   const [selectedTheme, setSelectedTheme] = useState<CodeTheme>("onedark");
 
+  // Selection range retention state for contentEditable focus prevention
+  const [savedRange, setSavedRange] = useState<Range | null>(null);
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const editableRef = useRef<HTMLDivElement>(null);
 
   // Load all folders and files in workspace
   const loadWorkspace = useCallback(async () => {
@@ -102,7 +104,7 @@ export default function EditorPage() {
   const handleSelectFile = async (file: FileRecord) => {
     if (!isEditable(file)) {
       toast.info("Read-only Preview", {
-        description: "Only text-based files (txt, md, js, json, css, etc.) are editable.",
+        description: "Only text-based files are editable.",
       });
       return;
     }
@@ -125,6 +127,13 @@ export default function EditorPage() {
       const text = await res.text();
       setTextContent(text);
       setOriginalText(text);
+
+      // Load content into contentEditable
+      setTimeout(() => {
+        if (editableRef.current) {
+          editableRef.current.innerHTML = text;
+        }
+      }, 50);
     } catch (err) {
       console.error(err);
       toast.error("Error reading file contents.");
@@ -149,7 +158,7 @@ export default function EditorPage() {
       if (res.ok && json.success) {
         setOriginalText(textContent);
         toast.success("Changes saved successfully!");
-        // Update local state record in case size changed
+        // Update local state record
         setFiles((prev) => prev.map((f) => (f.id === selectedFile.id ? json.data : f)));
       } else {
         toast.error(json.error || "Save failed.");
@@ -181,22 +190,40 @@ export default function EditorPage() {
     setExpandedFolders((prev) => ({ ...prev, [folderId]: !prev[folderId] }));
   };
 
-  // Document Helpers: Insert markup tags at current selection
-  const insertTextAtCursor = (prefix: string, suffix: string = "") => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const text = textarea.value;
-    const selected = text.substring(start, end);
-    const replacement = prefix + selected + suffix;
-    const newValue = text.substring(0, start) + replacement + text.substring(end);
-    setTextContent(newValue);
-    
-    setTimeout(() => {
-      textarea.focus();
-      textarea.setSelectionRange(start + prefix.length, start + prefix.length + selected.length);
-    }, 0);
+  // Selection range retention to prevent toolbar clicks from stealing focus
+  const saveSelection = () => {
+    const sel = window.getSelection();
+    if (sel && sel.rangeCount > 0) {
+      setSavedRange(sel.getRangeAt(0));
+    }
+  };
+
+  const restoreSelection = () => {
+    if (!savedRange) return;
+    const sel = window.getSelection();
+    if (sel) {
+      sel.removeAllRanges();
+      sel.addRange(savedRange);
+    }
+  };
+
+  // Word formatting helper: execution of browser commands
+  const execFormat = (command: string, value: string = "") => {
+    restoreSelection();
+    document.execCommand(command, false, value);
+    // Focus back on editable container
+    if (editableRef.current) {
+      editableRef.current.focus();
+      setTextContent(editableRef.current.innerHTML);
+    }
+    saveSelection();
+  };
+
+  // Monitor edits inside contentEditable
+  const handleEditableInput = () => {
+    if (editableRef.current) {
+      setTextContent(editableRef.current.innerHTML);
+    }
   };
 
   // Code Helpers: Prettifier / JSON alignment
@@ -222,42 +249,13 @@ export default function EditorPage() {
 
   // Count lines, words, chars
   const linesCount = textContent.split("\n").length;
-  const wordsCount = textContent.trim() === "" ? 0 : textContent.trim().split(/\s+/).length;
-  const charsCount = textContent.length;
-
-  // Reading time estimator (Avg. 200 words / minute)
-  const readingTime = Math.max(1, Math.ceil(wordsCount / 200));
-
-  // Custom live Markdown side parser
-  const renderMarkdown = (md: string) => {
-    let html = md
-      .replace(/&/g, "&amp;")
-      .replace(/</g, "&lt;")
-      .replace(/>/g, "&gt;");
-
-    // Headings
-    html = html.replace(/^### (.*$)/gim, '<h3 class="text-sm font-bold text-gray-900 dark:text-white mt-4 mb-1">$1</h3>');
-    html = html.replace(/^## (.*$)/gim, '<h2 class="text-base font-bold text-gray-900 dark:text-white border-b border-[var(--border)] pb-1 mt-5 mb-2">$1</h2>');
-    html = html.replace(/^# (.*$)/gim, '<h1 class="text-lg font-extrabold text-gray-900 dark:text-white pb-1.5 mt-6 mb-3">$1</h1>');
-
-    // Bold & Italics
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong class="font-bold text-gray-900 dark:text-white">$1</strong>');
-    html = html.replace(/\*(.*?)\*/g, '<em class="italic">$1</em>');
-
-    // Code blocks & inline code
-    html = html.replace(/```([\s\S]*?)```/g, '<pre class="bg-gray-100 dark:bg-gray-950 p-3 rounded-xl font-mono text-[10px] my-3 overflow-x-auto border border-[var(--border)]">$1</pre>');
-    html = html.replace(/`(.*?)`/g, '<code class="bg-gray-100 dark:bg-gray-950 px-1 py-0.5 rounded font-mono text-[10px]">$1</code>');
-
-    // Lists (simple)
-    html = html.replace(/^\s*-\s*\[\s*\]\s+(.*$)/gim, '<div class="flex items-center gap-2 my-1"><input type="checkbox" disabled class="rounded border-gray-300 text-primary-600" /> <span class="text-sm">$1</span></div>');
-    html = html.replace(/^\s*-\s*\[\s*x\s*\]\s+(.*$)/gim, '<div class="flex items-center gap-2 my-1"><input type="checkbox" checked disabled class="rounded border-gray-300 text-primary-600" /> <span class="line-through text-gray-400 text-sm">$1</span></div>');
-    html = html.replace(/^\s*-\s+(.*$)/gim, '<li class="list-disc list-inside ml-2 my-1 text-sm">$1</li>');
-
-    // Line breaks
-    html = html.replace(/\n/g, "<br />");
-
-    return { __html: html };
+  // Strip HTML tags to get pure word count for Document mode
+  const getPureText = (htmlStr: string) => {
+    return htmlStr.replace(/<[^>]*>/g, " ");
   };
+  const pureText = editorMode === "document" ? getPureText(textContent) : textContent;
+  const wordsCount = pureText.trim() === "" ? 0 : pureText.trim().split(/\s+/).length;
+  const charsCount = pureText.length;
 
   // Theme color maps for code editor
   const getThemeClass = (): string => {
@@ -369,6 +367,22 @@ export default function EditorPage() {
 
   return (
     <div className="flex flex-col lg:flex-row gap-6 min-h-[650px] lg:h-[calc(100vh-130px)] w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
+      
+      {/* ─── Styles to enforce extreme high-contrast white text inside Microsoft Word canvas in dark mode ─── */}
+      <style>{`
+        .word-editor-canvas p {
+          color: inherit !important;
+          margin-bottom: 0.75rem;
+        }
+        .word-editor-canvas h1 { font-size: 1.5rem !important; font-weight: 700 !important; color: inherit !important; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+        .word-editor-canvas h2 { font-size: 1.25rem !important; font-weight: 700 !important; color: inherit !important; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+        .word-editor-canvas h3 { font-size: 1.1rem !important; font-weight: 700 !important; color: inherit !important; margin-top: 1.25rem; margin-bottom: 0.5rem; }
+        .word-editor-canvas ul { list-style-type: disc !important; margin-left: 1.5rem !important; margin-bottom: 0.75rem !important; color: inherit !important; }
+        .word-editor-canvas ol { list-style-type: decimal !important; margin-left: 1.5rem !important; margin-bottom: 0.75rem !important; color: inherit !important; }
+        .word-editor-canvas li { color: inherit !important; }
+        .word-editor-canvas pre { background-color: rgba(243, 244, 246, 0.1); padding: 0.75rem; border-radius: 0.5rem; font-family: monospace; color: inherit !important; }
+      `}</style>
+
       {/* ─── Explorer Sidebar ─── */}
       <div className="w-full lg:w-[280px] flex-shrink-0 flex flex-col glass rounded-2xl border border-[var(--border)] overflow-hidden shadow-sm h-[380px] lg:h-full">
         <div className="px-4 py-3 border-b border-[var(--border)] flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/10">
@@ -395,11 +409,11 @@ export default function EditorPage() {
       {/* ─── Code/Text Editor Panel ─── */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden glass rounded-2xl border border-[var(--border)] shadow-sm bg-white dark:bg-gray-900 lg:h-full">
         {selectedFile ? (
-          <div className="flex-1 flex flex-col min-h-0">
+          <div className="flex-1 flex flex-col min-h-0 bg-gray-50/20 dark:bg-gray-950/10">
             {/* Editor Workspace Header */}
-            <div className="px-6 py-4 border-b border-[var(--border)] flex flex-col md:flex-row md:items-center justify-between gap-3 bg-gray-50/50 dark:bg-gray-800/10 shrink-0">
+            <div className="px-6 py-4 border-b border-[var(--border)] flex flex-col md:flex-row md:items-center justify-between gap-3 bg-white dark:bg-gray-900 shrink-0">
               <div className="flex items-center gap-2">
-                <FileCode className="h-5 w-5 text-green-500" />
+                <FileCode className="h-5 w-5 text-blue-500" />
                 <div className="flex flex-col">
                   <span className="text-sm font-semibold text-gray-900 dark:text-white flex items-center gap-2">
                     {selectedFile.display_name}
@@ -408,31 +422,35 @@ export default function EditorPage() {
                     )}
                   </span>
                   <span className="text-[10px] text-gray-400 capitalize">
-                    {selectedFile.mime_type} • {editorMode === "document" ? "📄 Rich Document" : "⚙️ Code IDE"} Mode
+                    {selectedFile.mime_type} • {editorMode === "document" ? "📘 Microsoft Word Mode" : "⚙️ Code IDE Mode"}
                   </span>
                 </div>
               </div>
 
-              {/* Top controls: Dual mode switcher, formatting actions, and theme dropdown */}
+              {/* Top controls: Dual mode switcher and Save action */}
               <div className="flex flex-wrap items-center gap-3">
-                {/* Mode Selector Tab group */}
                 <div className="inline-flex rounded-xl bg-gray-100 dark:bg-gray-800 p-0.5 border border-[var(--border)] text-xs font-semibold">
                   <button
-                    onClick={() => setEditorMode("document")}
+                    onClick={() => {
+                      setEditorMode("document");
+                      setTimeout(() => {
+                        if (editableRef.current) editableRef.current.innerHTML = textContent;
+                      }, 50);
+                    }}
                     className={`px-3 py-1.5 rounded-lg flex items-center gap-1 transition-all cursor-pointer ${
                       editorMode === "document"
-                        ? "bg-white dark:bg-gray-900 text-primary-600 dark:text-primary-400 shadow-sm"
+                        ? "bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 shadow-sm"
                         : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                     }`}
                   >
-                    <AlignLeft className="h-3.5 w-3.5" />
-                    Document
+                    <BookOpen className="h-3.5 w-3.5" />
+                    Word Editor
                   </button>
                   <button
                     onClick={() => setEditorMode("code")}
                     className={`px-3 py-1.5 rounded-lg flex items-center gap-1 transition-all cursor-pointer ${
                       editorMode === "code"
-                        ? "bg-white dark:bg-gray-900 text-primary-600 dark:text-primary-400 shadow-sm"
+                        ? "bg-white dark:bg-gray-900 text-blue-600 dark:text-blue-400 shadow-sm"
                         : "text-gray-500 hover:text-gray-700 dark:hover:text-gray-300"
                     }`}
                   >
@@ -443,72 +461,125 @@ export default function EditorPage() {
 
                 <div className="h-4 w-[1px] bg-[var(--border)]" />
 
-                {/* Save button */}
                 <Button
                   size="sm"
                   onClick={handleSave}
                   isLoading={savingContent}
                   disabled={textContent === originalText}
                   icon={<Save className="h-4 w-4" />}
+                  className="bg-blue-600 hover:bg-blue-700 border-none text-white shadow-sm"
                 >
                   Save (Ctrl+S)
                 </Button>
               </div>
             </div>
 
-            {/* Mode Specific Toolbars */}
-            <div className="px-6 py-2 bg-gray-50/30 dark:bg-gray-900/50 border-b border-[var(--border)] flex flex-wrap items-center justify-between gap-3 shrink-0">
+            {/* Formatting Ribbon Toolbar (Word Style vs Developer IDE Toolbars) */}
+            <div className="px-6 py-2.5 bg-white dark:bg-gray-900 border-b border-[var(--border)] flex flex-wrap items-center justify-between gap-3 shrink-0 select-none">
               {editorMode === "document" ? (
-                /* 📝 TEXT EDITOR TOOLBAR */
-                <div className="flex flex-wrap items-center gap-1.5">
+                /* 📘 MICROSOFT WORD RICH FORMATTING RIBBON TOOLBAR */
+                <div className="flex flex-wrap items-center gap-1 sm:gap-2">
+                  {/* Style drop selector */}
+                  <select
+                    onFocus={saveSelection}
+                    onChange={(e) => {
+                      execFormat("formatBlock", e.target.value);
+                      e.target.value = "<p>";
+                    }}
+                    className="bg-gray-50 dark:bg-gray-800 text-gray-700 dark:text-gray-250 border border-[var(--border)] rounded-lg px-2 py-1 text-xs focus:outline-none font-semibold mr-1 cursor-pointer"
+                    defaultValue="<p>"
+                  >
+                    <option value="<p>">Normal Text</option>
+                    <option value="<h1>">Heading 1</option>
+                    <option value="<h2>">Heading 2</option>
+                    <option value="<h3>">Heading 3</option>
+                    <option value="<pre>">Code Block</option>
+                  </select>
+
+                  <div className="h-5 w-[1px] bg-gray-200 dark:bg-gray-800 mx-1" />
+
+                  {/* Font Styling Ribbon group (Uses onMouseDown to retain selection focus) */}
                   <button
-                    onClick={() => insertTextAtCursor("**", "**")}
-                    className="p-1.5 rounded hover:bg-gray-150 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    onMouseDown={(e) => { e.preventDefault(); execFormat("bold"); }}
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-850 dark:hover:text-white transition-colors cursor-pointer"
                     title="Bold"
                   >
                     <Bold className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => insertTextAtCursor("*", "*")}
-                    className="p-1.5 rounded hover:bg-gray-150 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
+                    onMouseDown={(e) => { e.preventDefault(); execFormat("italic"); }}
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-850 dark:hover:text-white transition-colors cursor-pointer"
                     title="Italic"
                   >
                     <Italic className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => insertTextAtCursor("## ")}
-                    className="p-1.5 rounded hover:bg-gray-150 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
-                    title="Header"
+                    onMouseDown={(e) => { e.preventDefault(); execFormat("underline"); }}
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-850 dark:hover:text-white transition-colors cursor-pointer"
+                    title="Underline"
                   >
-                    <Heading className="h-4 w-4" />
+                    <Underline className="h-4 w-4" />
+                  </button>
+
+                  <div className="h-5 w-[1px] bg-gray-200 dark:bg-gray-800 mx-1" />
+
+                  {/* Alignments group */}
+                  <button
+                    onMouseDown={(e) => { e.preventDefault(); execFormat("justifyLeft"); }}
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-850 dark:hover:text-white transition-colors cursor-pointer"
+                    title="Align Left"
+                  >
+                    <AlignLeft className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => insertTextAtCursor("- ")}
-                    className="p-1.5 rounded hover:bg-gray-150 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
-                    title="Bullet List"
+                    onMouseDown={(e) => { e.preventDefault(); execFormat("justifyCenter"); }}
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-850 dark:hover:text-white transition-colors cursor-pointer"
+                    title="Align Center"
+                  >
+                    <AlignCenter className="h-4 w-4" />
+                  </button>
+                  <button
+                    onMouseDown={(e) => { e.preventDefault(); execFormat("justifyRight"); }}
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-850 dark:hover:text-white transition-colors cursor-pointer"
+                    title="Align Right"
+                  >
+                    <AlignRight className="h-4 w-4" />
+                  </button>
+                  <button
+                    onMouseDown={(e) => { e.preventDefault(); execFormat("justifyFull"); }}
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-850 dark:hover:text-white transition-colors cursor-pointer"
+                    title="Justify Align"
+                  >
+                    <AlignJustify className="h-4 w-4" />
+                  </button>
+
+                  <div className="h-5 w-[1px] bg-gray-200 dark:bg-gray-800 mx-1" />
+
+                  {/* Lists group */}
+                  <button
+                    onMouseDown={(e) => { e.preventDefault(); execFormat("insertUnorderedList"); }}
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-850 dark:hover:text-white transition-colors cursor-pointer"
+                    title="Bullet Points"
                   >
                     <List className="h-4 w-4" />
                   </button>
                   <button
-                    onClick={() => insertTextAtCursor("- [ ] ")}
-                    className="p-1.5 rounded hover:bg-gray-150 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
-                    title="Checklist"
+                    onMouseDown={(e) => { e.preventDefault(); execFormat("insertOrderedList"); }}
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-850 dark:hover:text-white transition-colors cursor-pointer"
+                    title="Numbered List"
                   >
-                    <CheckSquare className="h-4 w-4" />
+                    <ListOrdered className="h-4 w-4" />
                   </button>
+
+                  <div className="h-5 w-[1px] bg-gray-200 dark:bg-gray-800 mx-1" />
+
+                  {/* Clear formatting ribbon utility */}
                   <button
-                    onClick={() => insertTextAtCursor("[", "](url)")}
-                    className="p-1.5 rounded hover:bg-gray-150 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
-                    title="Insert Link"
+                    onMouseDown={(e) => { e.preventDefault(); execFormat("removeFormat"); }}
+                    className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 text-red-500 hover:text-red-700 transition-colors cursor-pointer"
+                    title="Clear Formatting"
                   >
-                    <Link2 className="h-4 w-4" />
-                  </button>
-                  <button
-                    onClick={() => insertTextAtCursor("\n| Header | Header |\n| ------ | ------ |\n| Cell | Cell |\n")}
-                    className="p-1.5 rounded hover:bg-gray-150 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors"
-                    title="Insert Table"
-                  >
-                    <Table2 className="h-4 w-4" />
+                    <Eraser className="h-4 w-4" />
                   </button>
                 </div>
               ) : (
@@ -521,7 +592,7 @@ export default function EditorPage() {
                     <select
                       value={selectedTheme}
                       onChange={(e) => setSelectedTheme(e.target.value as CodeTheme)}
-                      className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-250 border border-[var(--border)] rounded px-1.5 py-0.5 text-xs focus:outline-none"
+                      className="bg-gray-150 dark:bg-gray-850 text-gray-700 dark:text-gray-250 border border-[var(--border)] rounded px-1.5 py-0.5 text-xs focus:outline-none cursor-pointer"
                     >
                       <option value="onedark">One Dark Pro</option>
                       <option value="monokai">Monokai Dark</option>
@@ -535,92 +606,96 @@ export default function EditorPage() {
                   {/* Format Beautifier */}
                   <button
                     onClick={handleFormatCode}
-                    className="flex items-center gap-1 text-xs font-semibold px-2 py-1 border border-[var(--border)] rounded hover:bg-gray-150 dark:hover:bg-gray-800 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
-                    title="Prettify / Clean Syntax"
+                    className="flex items-center gap-1 text-xs font-semibold px-2 py-1 border border-[var(--border)] rounded hover:bg-gray-100 dark:hover:bg-gray-850 text-gray-500 hover:text-gray-900 dark:hover:text-white transition-colors cursor-pointer"
+                    title="Prettify Code"
                   >
                     <Sparkles className="h-3.5 w-3.5 text-amber-500" />
                     Format Code
                   </button>
                 </div>
               )}
-
-              {/* Mode Specific Toggle Preview (Document specific) */}
-              {editorMode === "document" && (
-                <button
-                  onClick={() => setShowSplitPreview(!showSplitPreview)}
-                  className={`flex items-center gap-1 text-xs font-semibold px-2.5 py-1 border rounded-lg transition-all cursor-pointer ${
-                    showSplitPreview
-                      ? "bg-primary-50 dark:bg-primary-950/30 text-primary-600 border-primary-200 dark:border-primary-900"
-                      : "border-[var(--border)] text-gray-500 hover:bg-gray-150 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white"
-                  }`}
-                >
-                  <Eye className="h-3.5 w-3.5" />
-                  {showSplitPreview ? "Hide Preview" : "Split Live Preview"}
-                </button>
-              )}
             </div>
 
-            {/* Editing Canvas */}
-            <div className="flex-1 relative flex min-h-0 overflow-hidden bg-gray-50/30 dark:bg-gray-950/20">
+            {/* Microsoft Word Canvas & Code IDE Canvas Area */}
+            <div className="flex-1 relative flex min-h-0 overflow-hidden bg-gray-100/50 dark:bg-gray-950/30">
               {loadingContent ? (
                 <div className="absolute inset-0 flex items-center justify-center bg-white/50 dark:bg-black/50 z-10">
                   <Loader2 className="h-8 w-8 animate-spin text-primary-500" />
                 </div>
               ) : (
-                <div className="flex-1 flex min-h-0 divide-x divide-[var(--border)]">
-                  {/* Left Side Editing Box */}
-                  <div className="flex-1 flex min-h-0">
-                    {/* Line numbers (only visible in Code mode) */}
-                    {editorMode === "code" && (
-                      <div className="py-4 select-none pr-3 text-right bg-gray-100/30 dark:bg-gray-950/30 border-r border-[var(--border)] font-mono text-[11px] text-gray-400 w-12 hidden sm:block shrink-0 leading-relaxed font-semibold">
+                <div className="flex-1 flex min-h-0">
+                  
+                  {/* ─── ⚙️ CODE IDE CANVAS ─── */}
+                  {editorMode === "code" && (
+                    <div className="flex-1 flex min-h-0 bg-white dark:bg-gray-900">
+                      {/* Line numbers column */}
+                      <div className="py-4 select-none pr-3 text-right bg-gray-50 dark:bg-gray-950/30 border-r border-[var(--border)] font-mono text-[11px] text-gray-400 w-12 hidden sm:block shrink-0 leading-relaxed font-semibold">
                         {Array.from({ length: linesCount }).map((_, idx) => (
                           <div key={idx}>{idx + 1}</div>
                         ))}
                       </div>
-                    )}
 
-                    <textarea
-                      ref={textareaRef}
-                      value={textContent}
-                      onChange={(e) => setTextContent(e.target.value)}
-                      className={`flex-1 p-4 outline-none border-none resize-none focus:ring-0 leading-relaxed overflow-y-auto ${
-                        editorMode === "code"
-                          ? getThemeClass()
-                          : "font-sans text-sm text-gray-800 dark:text-gray-200"
-                      }`}
-                      placeholder="Start typing your file content here..."
-                    />
-                  </div>
-
-                  {/* Right Side Live Split Preview (Document specific) */}
-                  {editorMode === "document" && showSplitPreview && (
-                    <div className="flex-1 overflow-y-auto p-5 bg-white dark:bg-gray-900/60 prose dark:prose-invert max-w-none text-gray-800 dark:text-gray-250 border-l border-[var(--border)]">
-                      <div className="text-[10px] font-bold text-gray-400 border-b border-[var(--border)] pb-2 mb-4 uppercase tracking-wider flex items-center gap-1.5">
-                        <BookOpen className="h-3.5 w-3.5 text-primary-500" />
-                        Live Document Preview
-                      </div>
-                      <div dangerouslySetInnerHTML={renderMarkdown(textContent)} />
+                      <textarea
+                        ref={textareaRef}
+                        value={textContent}
+                        onChange={(e) => setTextContent(e.target.value)}
+                        className={`flex-1 p-4 outline-none border-none resize-none focus:ring-0 leading-relaxed overflow-y-auto ${getThemeClass()}`}
+                        placeholder="Start coding here..."
+                      />
                     </div>
                   )}
+
+                  {/* ─── 📘 MICROSOFT WORD LIVE WORKSPACE CANVAS (With total accessibility & white text in dark mode!) ─── */}
+                  {editorMode === "document" && (
+                    <div className="flex-1 overflow-y-auto p-4 sm:p-8">
+                      {/* Live Microsoft Word editable paper sheet */}
+                      <div className="max-w-4xl mx-auto border border-gray-200 dark:border-slate-800 rounded-2xl bg-white dark:bg-slate-900 shadow-lg p-6 sm:p-14 min-h-[650px] focus:outline-none">
+                        
+                        {/* Word style header tab */}
+                        <div className="text-[10px] font-bold text-blue-500 border-b border-blue-100 dark:border-blue-950 pb-2 mb-6 uppercase tracking-wider flex items-center gap-1.5 select-none justify-between">
+                          <span className="flex items-center gap-1.5">
+                            <BookOpen className="h-3.5 w-3.5 text-blue-500 animate-pulse" />
+                            Microsoft Word Live Canvas
+                          </span>
+                          <span className="text-[8px] bg-blue-50 dark:bg-blue-950/70 px-1.5 py-0.5 rounded text-blue-600 dark:text-blue-400">
+                            Wysiwyg In-Place
+                          </span>
+                        </div>
+
+                        {/* Direct Editable Page Div */}
+                        <div
+                          ref={editableRef}
+                          contentEditable={true}
+                          onInput={handleEditableInput}
+                          onMouseUp={saveSelection}
+                          onKeyUp={saveSelection}
+                          className="min-h-[500px] outline-none text-slate-900 dark:text-white font-sans text-sm focus:outline-none cursor-text leading-relaxed select-text word-editor-canvas"
+                          style={{ minHeight: "500px" }}
+                          placeholder="Click here and start typing, just like in Microsoft Word..."
+                        />
+                      </div>
+                    </div>
+                  )}
+
                 </div>
               )}
             </div>
 
-            {/* Editor Footer / Info panel */}
-            <div className="px-6 py-2.5 border-t border-[var(--border)] flex items-center justify-between bg-gray-50/50 dark:bg-gray-800/10 text-[10px] font-bold text-gray-450 tracking-wide uppercase shrink-0">
+            {/* Document / IDE Status Metrics Footer */}
+            <div className="px-6 py-2.5 border-t border-[var(--border)] flex items-center justify-between bg-white dark:bg-gray-900 text-[10px] font-bold text-gray-400 tracking-wide uppercase shrink-0 select-none">
               <div className="flex items-center gap-4">
-                <span>{linesCount} lines</span>
+                {editorMode === "code" && <span>{linesCount} lines</span>}
                 <span>{wordsCount} words</span>
                 <span>{charsCount} characters</span>
                 {editorMode === "document" && (
-                  <span className="hidden sm:inline border-l border-[var(--border)] pl-4 text-primary-500">
-                    📖 Est. Reading Time: ~{readingTime} min{readingTime > 1 ? "s" : ""}
+                  <span className="text-blue-500 hidden sm:inline">
+                    📘 Live Word Workspace Active (No Compile Needed)
                   </span>
                 )}
               </div>
-              <span className="hidden sm:flex items-center gap-1.5 text-green-500">
+              <span className="hidden sm:flex items-center gap-1.5 text-blue-500">
                 <CheckCircle className="h-3.5 w-3.5" />
-                Workspace synced
+                Auto-synced
               </span>
             </div>
           </div>
@@ -631,12 +706,12 @@ export default function EditorPage() {
             </div>
             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-2">Welcome to Fyliolabs Workspace</h2>
             <p className="max-w-md text-sm text-gray-500 leading-relaxed">
-              Select any editable text-based file from the sidebar explorer tree on the left. Toggle between **📄 Document** mode for formatted summaries or **⚙️ Code IDE** mode for programming.
+              Select any editable text-based file from the sidebar explorer tree on the left.
             </p>
             <div className="mt-6 flex flex-col items-center gap-2 max-w-sm w-full">
               <div className="flex items-center gap-1.5 text-xs text-gray-450 bg-gray-50 dark:bg-gray-850 px-3 py-1.5 rounded-lg border border-[var(--border)] w-full">
                 <Info className="h-3.5 w-3.5 text-primary-500 shrink-0" />
-                <span>Supports shortcut saving with <kbd className="font-bold border border-gray-300 dark:border-gray-700 px-1 rounded bg-white dark:bg-gray-800 font-mono">Ctrl + S</kbd>.</span>
+                <span>Double click files or click folders to navigate your hierarchy.</span>
               </div>
             </div>
           </div>
