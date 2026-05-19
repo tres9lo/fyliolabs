@@ -14,6 +14,8 @@ import {
   ChevronLeft,
   Menu,
   Code,
+  Info,
+  Mail,
 } from "lucide-react";
 import { useToast } from "@/components/providers/toast-provider";
 import { useTranslations } from "next-intl";
@@ -26,6 +28,8 @@ const navigation = [
   { key: "folders", href: "/folders", icon: FolderOpen },
   { key: "editor", href: "/editor", icon: Code },
   { key: "search", href: "/search", icon: Search },
+  { key: "about", href: "/about", icon: Info },
+  { key: "contact", href: "/contact", icon: Mail },
   { key: "settings", href: "/settings", icon: Settings },
 ];
 
