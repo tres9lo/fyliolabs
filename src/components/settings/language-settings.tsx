@@ -2,7 +2,6 @@
 
 import { useLocale } from "next-intl";
 import { useRouter } from "next/navigation";
-import { Card } from "@/components/ui/card";
 import { useTranslations } from "next-intl";
 import { Globe } from "lucide-react";
 
@@ -26,23 +25,25 @@ export function LanguageSettings() {
   };
 
   return (
-    <Card className="p-6">
-      <div className="space-y-4">
-        <div className="flex items-center gap-2 pb-2 border-b border-gray-200 dark:border-gray-700">
-          <Globe className="h-5 w-5 text-primary-500" />
-          <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-            {t("language")}
-          </h3>
+    <div className="glass p-8 rounded-2xl border border-[var(--border)] shadow-sm">
+      <div className="space-y-6">
+        <div className="flex items-center gap-3 pb-4 border-b border-[var(--border)]">
+          <div className="p-2 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+            <Globe className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+          </div>
+          <div>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">
+              {t("language")}
+            </h3>
+            <p className="text-xs text-gray-500">{t("selectLanguage")}</p>
+          </div>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-            {t("selectLanguage")}
-          </label>
           <select
             value={locale}
             onChange={(e) => handleChange(e.target.value)}
-            className="w-full rounded-md border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+            className="w-full rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] px-4 py-3 text-sm font-medium focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20 transition-all cursor-pointer hover:border-primary-300 dark:hover:border-primary-700"
           >
             {locales.map((loc) => (
               <option key={loc.code} value={loc.code}>
@@ -52,6 +53,6 @@ export function LanguageSettings() {
           </select>
         </div>
       </div>
-    </Card>
+    </div>
   );
 }

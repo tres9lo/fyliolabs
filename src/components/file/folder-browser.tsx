@@ -2,7 +2,8 @@
 
 import { useState, useEffect, useCallback } from "react";
 import { useTranslations } from "next-intl";
-import type { Folder, FileRecord } from "@/types";
+import type { Folder } from "@/types/folder";
+import type { FileRecord } from "@/types/file";
 import { cn } from "@/lib/utils";
 import {
   FolderPlus, Loader2, Home, ChevronDown, ChevronRight,
@@ -164,12 +165,12 @@ export function FolderBrowser({
 
   const countDescendants = (folder: Folder & { children?: Folder[] }): number => {
     if (!folder.children?.length) return 0;
-    return folder.children.reduce((acc, child) => acc + 1 + countDescendants(child as Folder & { children?: Folder[] }), 0);
+    return folder.children.reduce((acc: number, child: Folder) => acc + 1 + countDescendants(child as Folder & { children?: Folder[] }), 0);
   };
 
   // ── Render: Flat grid of folder cards ──
   const renderFolderGrid = (items: Folder[], depth = 0) => (
-    <div className={cn("grid gap-2.5", depth === 0 ? "grid-cols-2" : "grid-cols-1")} key={depth}>
+    <div className="grid gap-2.5 grid-cols-1" key={depth}>
       {items.map((folder) => {
         const hasChildren = folder.children && folder.children.length > 0;
         const isExpanded = expandedIds.has(folder.id);
@@ -233,7 +234,7 @@ export function FolderBrowser({
                   <>
                     <div className="flex-1 min-w-0">
                       <p className={cn(
-                        "font-medium truncate",
+                        "font-medium break-words whitespace-normal",
                         depth === 0
                           ? "text-sm text-gray-900 dark:text-white"
                           : "text-xs text-gray-700 dark:text-gray-300",
@@ -396,7 +397,7 @@ export function FolderBrowser({
   const [viewMode, setViewMode] = useState<"grid" | "tree">("grid");
 
   return (
-    <aside className="w-[260px] flex-shrink-0 flex flex-col border-r border-[var(--border)] bg-[var(--surface)]">
+    <aside className="w-full h-full flex flex-col bg-transparent">
       {/* Header */}
       <div className="p-4 border-b border-[var(--border)] space-y-3">
         <div className="flex items-center justify-between">

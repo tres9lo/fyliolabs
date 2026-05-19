@@ -13,7 +13,6 @@ import {
   Loader2,
   ChevronLeft,
   Menu,
-  X,
 } from "lucide-react";
 import { useToast } from "@/components/providers/toast-provider";
 import { useTranslations } from "next-intl";
@@ -36,52 +35,55 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "flex-shrink-0 flex flex-col border-r",
-        "bg-[var(--surface)] border-[var(--border)]",
+        "flex-shrink-0 flex flex-col border-r border-white/20 dark:border-white/10 z-20",
+        "glass shadow-sm backdrop-blur-2xl",
         "transition-all duration-300",
-        collapsed ? "w-[68px]" : "w-[240px]"
+        collapsed ? "w-[72px]" : "w-[260px]"
       )}
     >
       {/* Logo region */}
-      <div className="p-4 border-b border-[var(--border)] flex items-center justify-between">
+      <div className="p-5 border-b border-[var(--border)] flex items-center justify-between">
         {!collapsed && (
-          <Link href="/" className="flex items-center">
+          <Link href="/" className="flex items-center transition-transform hover:scale-105">
             <Logo />
           </Link>
         )}
         <button
           onClick={() => setCollapsed((p) => !p)}
-          className="p-1.5 rounded-lg text-gray-500 hover:bg-[var(--surface-muted)] hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors ml-auto"
+          className="p-1.5 rounded-xl text-gray-500 hover:bg-white dark:hover:bg-gray-800 hover:text-primary-600 dark:hover:text-primary-400 transition-all hover:shadow-sm ml-auto"
         >
           {collapsed ? <Menu className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </button>
       </div>
 
       {/* Nav links */}
-      <nav className="flex-1 p-3 space-y-0.5">
+      <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
         {navigation.map((item) => {
-          const isActive = pathname === item.href;
+          const isActive = pathname === item.href || (item.href !== "/" && pathname.startsWith(item.href));
           return (
             <Link
               key={item.key}
               href={item.href}
               title={collapsed ? t(`sidebar.${item.key}`) : undefined}
               className={cn(
-                "flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150",
+                "flex items-center gap-3 px-3 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group",
                 collapsed ? "justify-center" : "",
                 isActive
-                  ? "bg-primary-500 text-white shadow-md shadow-primary-500/25"
-                  : "text-gray-600 dark:text-gray-300 hover:bg-[var(--surface-muted)] hover:text-gray-900 dark:hover:text-white"
+                  ? "bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-lg shadow-primary-500/25 scale-[1.02]"
+                  : "text-gray-600 dark:text-gray-400 hover:bg-white/50 dark:hover:bg-gray-800/50 hover:text-primary-600 dark:hover:text-primary-400"
               )}
             >
-              <item.icon className="h-[18px] w-[18px] flex-shrink-0" />
+              <item.icon className={cn(
+                "h-[20px] w-[20px] flex-shrink-0 transition-transform duration-300",
+                isActive ? "" : "group-hover:scale-110"
+              )} />
               {!collapsed && <span>{t(`sidebar.${item.key}`)}</span>}
             </Link>
           );
         })}
       </nav>
 
-      <div className="p-3 border-t border-[var(--border)]">
+      <div className="p-4 border-t border-[var(--border)]">
         <LogoutButton collapsed={collapsed} />
       </div>
     </aside>
@@ -121,15 +123,15 @@ function LogoutButton({ collapsed }: { collapsed: boolean }) {
       onClick={handleLogout}
       title={collapsed ? t("common.signOut") : undefined}
       className={cn(
-        "flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-150",
-        "text-gray-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:text-gray-400",
+        "flex items-center gap-3 w-full px-3 py-3 rounded-xl text-sm font-semibold transition-all duration-300 group",
+        "text-gray-500 hover:bg-red-50 hover:text-red-600 dark:hover:bg-red-900/20 dark:hover:text-red-400 hover:shadow-sm",
         collapsed ? "justify-center" : ""
       )}
     >
       {isLoading ? (
-        <Loader2 className="h-[18px] w-[18px] animate-spin" />
+        <Loader2 className="h-[20px] w-[20px] animate-spin" />
       ) : (
-        <LogOut className="h-[18px] w-[18px]" />
+        <LogOut className="h-[20px] w-[20px] group-hover:scale-110 transition-transform duration-300" />
       )}
       {!collapsed && <span>{t("common.signOut")}</span>}
     </button>

@@ -4,14 +4,14 @@ import { useState, useEffect, useCallback } from "react";
 import { FolderBrowser } from "@/components/file/folder-browser";
 import { UploadZone } from "@/components/file/upload-zone";
 import { FileList } from "@/components/file/file-list";
-import Card from "@/components/ui/card";
 import { FileDetailPanel } from "@/components/file/file-detail-panel";
-import Button from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { Download, FolderOpen, Loader2, ArrowUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import type { FileRecord, Folder } from "@/types";
+import type { FileRecord } from "@/types/file";
+import type { Folder } from "@/types/folder";
 
 export default function FilesPage() {
   const t = useTranslations();
@@ -147,87 +147,88 @@ export default function FilesPage() {
     : tCommon("noFolder");
 
   return (
-    <div className="flex gap-0 h-full min-h-0">
+    <div className="flex flex-col lg:flex-row gap-6 h-full min-h-0 w-full animate-in fade-in slide-in-from-bottom-4 duration-700">
       {/* ─── Folder Browser sidebar ─── */}
-      <FolderBrowser
-        files={files}
-        loading={loading}
-        currentFolderId={currentFolderId}
-        onFolderSelect={(id) => {
-          setCurrentFolderId(id);
-          setSelectedIds([]);
-          setSelectedFile(null);
-        }}
-        onFilesChange={loadFiles}
-        onMoveFile={handleMoveFile}
-      />
+      <div className="w-full lg:w-[300px] flex-shrink-0 flex flex-col glass rounded-2xl border border-[var(--border)] overflow-hidden shadow-sm h-[400px] lg:h-auto">
+        <FolderBrowser
+          files={files}
+          loading={loading}
+          currentFolderId={currentFolderId}
+          onFolderSelect={(id) => {
+            setCurrentFolderId(id);
+            setSelectedIds([]);
+            setSelectedFile(null);
+          }}
+          onFilesChange={loadFiles}
+          onMoveFile={handleMoveFile}
+        />
+      </div>
 
       {/* ─── Main content ─── */}
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0 overflow-hidden glass rounded-2xl border border-[var(--border)] shadow-sm p-4 sm:p-6 lg:p-8">
         {/* Breadcrumb + page title */}
-        <div className="mb-5 flex items-center justify-between flex-wrap gap-3">
+        <div className="mb-6 flex items-center justify-between flex-wrap gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white font-display">
+            <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white font-display tracking-tight">
               {t("files.title")}
             </h1>
-            <div className="flex items-center gap-1.5 mt-1">
+            <nav aria-label="Breadcrumb" className="flex items-center gap-2 mt-2">
               <button
                 onClick={() => { setCurrentFolderId(null); }}
                 className={cn(
-                  "text-sm transition-colors",
-                  !currentFolderId ? "text-gray-900 dark:text-white font-semibold" : "text-gray-500 hover:text-primary-500 dark:text-gray-400"
+                  "text-sm font-medium transition-colors rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500",
+                  !currentFolderId ? "text-primary-600 dark:text-primary-400" : "text-gray-500 hover:text-gray-900 dark:hover:text-white"
                 )}
               >
                 {tCommon("noFolder")}
               </button>
               {currentFolder && (
                 <>
-                  <ChevronSmall className="h-3.5 w-3.5 text-gray-400" />
-                  <span className="text-sm text-gray-900 dark:text-white font-medium">
+                  <ChevronSmall className="h-4 w-4 text-gray-400" />
+                  <span className="text-sm text-gray-900 dark:text-white font-semibold" aria-current="page">
                     {currentFolder.name}
                   </span>
                 </>
               )}
-            </div>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mt-0.5">
+            </nav>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
               {t("files.subtitle")}
             </p>
           </div>
 
           <button
             onClick={() => { setCurrentFolderId(null); setSelectedFile(null); setSelectedIds([]); void loadFiles(); }}
-            className="flex items-center gap-1.5 text-xs font-medium text-primary-500 hover:text-primary-400 transition-colors"
+            className="flex items-center gap-1.5 text-sm font-semibold text-primary-600 hover:text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/30 px-3 py-1.5 rounded-lg transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+            aria-label="View all files"
           >
-            <ArrowUp className="h-3.5 w-3.5" />
+            <ArrowUp className="h-4 w-4" />
             {t("files.allFiles")}
           </button>
         </div>
 
         {/* Upload zone */}
-        <Card className="mb-5 border-[var(--border)] shadow-sm bg-[var(--surface)]">
-          <div className="p-5">
-            <UploadZone onUploadSuccess={handleUploadSuccess} selectedFolder={currentFolderId} />
-          </div>
-        </Card>
+        <div className="mb-6">
+          <UploadZone onUploadSuccess={handleUploadSuccess} selectedFolder={currentFolderId} />
+        </div>
 
         {/* Your Files section */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-base font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-            <FolderOpen className="h-4 w-4 text-primary-500" />
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+            <FolderOpen className="h-5 w-5 text-primary-500" />
             {t("files.yourFiles")}
-            <span className="text-xs font-normal text-gray-400">
+            <span className="text-sm font-normal text-gray-400">
               {currentFolderId ? `(${folderLabel})` : ""}
             </span>
           </h2>
           {files.length > 0 && (
-            <span className="text-xs text-gray-500 dark:text-gray-400">
+            <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
               {files.length} file{files.length !== 1 ? "s" : ""}
             </span>
           )}
         </div>
 
-        <Card className="flex-1 border-[var(--border)] shadow-sm bg-[var(--surface)] overflow-hidden min-h-0">
-          <div className="flex-1 overflow-y-auto p-5 min-h-0">
+        <div className="flex-1 border border-[var(--border)] rounded-xl bg-[var(--surface-muted)] overflow-hidden min-h-0 flex flex-col">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 min-h-0">
             <FileList
               files={files}
               loading={loading}
@@ -236,18 +237,18 @@ export default function FilesPage() {
               onToggle={toggleSelection}
             />
           </div>
-        </Card>
+        </div>
 
         {/* Selection bar */}
         {selectedIds.length > 0 && (
-          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-4 py-3 rounded-xl shadow-lg flex items-center gap-4 z-50 animate-[slide-up_250ms_ease-out]">
-            <span className="text-sm font-medium">
+          <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-6 py-4 rounded-2xl shadow-xl flex items-center gap-4 z-50 animate-[slide-up_250ms_ease-out]">
+            <span className="text-sm font-bold tracking-wide">
               {selectedIds.length} file{selectedIds.length > 1 ? "s" : ""} selected
             </span>
-            <Button size="sm" variant="secondary" onClick={clearSelection}>
+            <Button size="sm" variant="secondary" onClick={clearSelection} className="dark:bg-gray-100 dark:text-gray-900">
               {tCommon("cancel")}
             </Button>
-            <Button size="sm" onClick={handleDownloadZip} icon={<Download className="h-4 w-4" />}>
+            <Button size="sm" onClick={handleDownloadZip} icon={<Download className="h-4 w-4" />} className="bg-primary-600 hover:bg-primary-700 text-white border-none">
               {tCommon("download")} ZIP
             </Button>
           </div>

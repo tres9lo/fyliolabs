@@ -5,10 +5,11 @@ import { useDropzone } from "react-dropzone";
 import { Upload, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useToast } from "@/components/providers/toast-provider";
+import type { FileRecord } from "@/types/file";
 
 const MAX_SIZE = 100 * 1024 * 1024; // 100MB
 
-export function UploadZone({ onUploadSuccess, selectedFolder }: { onUploadSuccess?: (file: File) => void; selectedFolder?: string | null }) {
+export function UploadZone({ onUploadSuccess, selectedFolder }: { onUploadSuccess?: (file: FileRecord) => void; selectedFolder?: string | null }) {
   const [isLoading, setIsLoading] = useState(false);
   const { addToast } = useToast();
   const t = useTranslations();

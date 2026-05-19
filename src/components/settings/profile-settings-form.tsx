@@ -5,12 +5,11 @@ import { useToast } from "@/components/providers/toast-provider";
 import { useTranslations } from "next-intl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card } from "@/components/ui/card";
 import { FormField } from "@/components/ui/form-field";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { profileUpdateSchema } from "@/types/profile";
-import { Save } from "lucide-react";
+import { Save, User, Cloud } from "lucide-react";
 import type { ProfileUpdateInput } from "@/types/profile";
 
 export function ProfileSettingsForm() {
@@ -110,126 +109,105 @@ export function ProfileSettingsForm() {
 
   if (isLoadingData) {
     return (
-      <Card className="p-6">
+      <div className="glass p-8 rounded-2xl border border-[var(--border)] shadow-sm">
         <div className="flex items-center justify-center py-12">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600"></div>
         </div>
-      </Card>
+      </div>
     );
   }
 
   return (
-    <Card className="p-6">
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        {/* Basic Info */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 pb-2 border-b border-gray-200 dark:border-gray-700">
-            <div className="w-1 h-6 bg-primary-500 rounded-full" />
-            <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-              {t("basicInfo")}
-            </h3>
+    <div className="glass p-8 rounded-2xl border border-[var(--border)] shadow-sm">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
+        
+        {/* Basic Info Section */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 pb-4 border-b border-[var(--border)]">
+            <div className="p-2 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+              <User className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">
+                {t("basicInfo")}
+              </h3>
+            </div>
           </div>
 
-          <FormField
-            label={t("fullName")}
-            error={errors.full_name?.message}
-          >
-            <Input
-              type="text"
-              placeholder="John Doe"
-              {...register("full_name")}
-            />
-          </FormField>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField label={t("fullName")} error={errors.full_name?.message}>
+              <Input type="text" placeholder="John Doe" className="bg-[var(--surface-muted)]" {...register("full_name")} />
+            </FormField>
 
-          <FormField
-            label={t("avatarUrl")}
-            error={errors.avatar_url?.message}
-          >
-            <Input
-              type="url"
-              placeholder="https://example.com/avatar.jpg"
-              {...register("avatar_url")}
-            />
-          </FormField>
+            <FormField label={t("avatarUrl")} error={errors.avatar_url?.message}>
+              <Input type="url" placeholder="https://example.com/avatar.jpg" className="bg-[var(--surface-muted)]" {...register("avatar_url")} />
+            </FormField>
+          </div>
         </div>
 
-        {/* Cloudinary Settings */}
-        <div className="space-y-4">
-          <div className="flex items-center gap-2 pb-2 border-b border-gray-200 dark:border-gray-700">
-            <div className="w-1 h-6 bg-primary-500 rounded-full" />
-            <h3 className="text-sm font-medium text-gray-900 dark:text-white">
-              {t("cloudinary")}
-            </h3>
+        {/* Cloudinary Section */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-3 pb-4 border-b border-[var(--border)]">
+            <div className="p-2 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+              <Cloud className="h-5 w-5 text-primary-600 dark:text-primary-400" />
+            </div>
+            <div>
+              <h3 className="text-lg font-bold text-gray-900 dark:text-white tracking-tight">
+                {t("cloudinary")}
+              </h3>
+            </div>
           </div>
 
-          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-lg p-3 mb-4">
-            <p className="text-xs text-amber-800 dark:text-amber-200">
+          <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-4 mb-4">
+            <p className="text-sm font-medium text-amber-800 dark:text-amber-300">
               {t("warning")}
             </p>
           </div>
 
-          <FormField
-            label={t("cloudName")}
-            error={errors.cloudinary_cloud_name?.message}
-          >
-            <Input
-              type="text"
-              placeholder="your-cloud-name"
-              {...register("cloudinary_cloud_name")}
-            />
+          <FormField label={t("cloudName")} error={errors.cloudinary_cloud_name?.message}>
+            <Input type="text" placeholder="your-cloud-name" className="bg-[var(--surface-muted)]" {...register("cloudinary_cloud_name")} />
           </FormField>
 
-          <FormField
-            label={t("apiKey")}
-            error={errors.cloudinary_api_key?.message}
-          >
-            <Input
-              type="password"
-              placeholder="Enter API key"
-              {...register("cloudinary_api_key")}
-            />
-          </FormField>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <FormField label={t("apiKey")} error={errors.cloudinary_api_key?.message}>
+              <Input type="password" placeholder="Enter API key" className="bg-[var(--surface-muted)]" {...register("cloudinary_api_key")} />
+            </FormField>
 
-          <FormField
-            label={t("apiSecret")}
-            error={errors.cloudinary_api_secret?.message}
-          >
-            <Input
-              type="password"
-              placeholder="Enter API secret"
-              {...register("cloudinary_api_secret")}
-            />
-          </FormField>
+            <FormField label={t("apiSecret")} error={errors.cloudinary_api_secret?.message}>
+              <Input type="password" placeholder="Enter API secret" className="bg-[var(--surface-muted)]" {...register("cloudinary_api_secret")} />
+            </FormField>
+          </div>
 
           <FormField label={t("secure")}>
-            <label className="inline-flex items-center gap-2 cursor-pointer">
+            <label className="inline-flex items-center gap-3 cursor-pointer p-3 rounded-xl border border-[var(--border)] bg-[var(--surface-muted)] hover:border-primary-300 dark:hover:border-primary-700 transition-colors w-full sm:w-auto">
               <input
                 type="checkbox"
                 {...register("cloudinary_secure")}
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                className="h-5 w-5 text-primary-600 focus:ring-primary-500 border-gray-300 rounded cursor-pointer"
               />
-              <span className="text-sm text-gray-700 dark:text-gray-300">
+              <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                 {t("secure")}
               </span>
             </label>
           </FormField>
         </div>
 
-        <div className="flex justify-end gap-3 pt-6 border-t border-gray-200 dark:border-gray-700">
+        <div className="flex justify-end gap-3 pt-6 border-t border-[var(--border)]">
           <Button
             type="button"
             variant="secondary"
             onClick={() => reset()}
             disabled={!isDirty || isLoading}
+            className="rounded-xl"
           >
             {tCommon("resetForm")}
           </Button>
-          <Button type="submit" isLoading={isLoading} icon={<Save className="h-4 w-4" />}>
+          <Button type="submit" isLoading={isLoading} icon={<Save className="h-4 w-4" />} className="rounded-xl">
             {t("saveChanges")}
           </Button>
         </div>
       </form>
-    </Card>
+    </div>
   );
 }
 

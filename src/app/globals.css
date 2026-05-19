@@ -16,77 +16,80 @@
   --color-primary-700: var(--primary-700);
   --color-primary-800: var(--primary-800);
   --color-primary-900: var(--primary-900);
-  --color-accent-500: var(--accent-500);
-  --color-accent-600: var(--accent-600);
   --color-success-bg: var(--success-bg);
   --color-success-text: var(--success-text);
   --color-error-bg: var(--error-bg);
   --color-error-text: var(--error-text);
-  --font-sans: 'DM Sans', system-ui, sans-serif;
-  --font-display: 'Instrument Serif', Georgia, serif;
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-display: 'Outfit', system-ui, sans-serif;
   --font-mono: 'JetBrains Mono', monospace;
 }
 
 :root {
-  --background: #f6f7fb;
-  --foreground: #0f172a;
+  /* Minimalist light mode */
+  --background: #fdfdfd;
+  --foreground: #111111;
   --surface: #ffffff;
-  --surface-muted: #f1f3f8;
-  --border: #dde2ee;
-  --primary-50: #eef2ff;
-  --primary-100: #e0e7ff;
-  --primary-200: #c7d2fe;
-  --primary-300: #a5b4fc;
-  --primary-400: #818cf8;
-  --primary-500: #6366f1;
-  --primary-600: #4f46e5;
-  --primary-700: #4338ca;
-  --primary-800: #3730a3;
-  --primary-900: #312e81;
-  --accent-50: #fff7ed;
-  --accent-100: #ffedd5;
-  --accent-200: #fed7aa;
-  --accent-500: #f97316;
-  --accent-600: #ea580c;
+  --surface-muted: #f4f4f5;
+  --border: #e4e4e7;
+  
+  /* Unified sleek primary (Indigo/Slate) */
+  --primary-50: #eff6ff;
+  --primary-100: #dbeafe;
+  --primary-200: #bfdbfe;
+  --primary-300: #93c5fd;
+  --primary-400: #60a5fa;
+  --primary-500: #3b82f6;
+  --primary-600: #2563eb;
+  --primary-700: #1d4ed8;
+  --primary-800: #1e40af;
+  --primary-900: #1e3a8a;
+  
   --success-bg: #f0fdf4;
-  --success-text: #16a34a;
+  --success-text: #15803d;
   --error-bg: #fef2f2;
-  --error-text: #dc2626;
+  --error-text: #b91c1c;
   --warning-bg: #fffbeb;
-  --warning-text: #d97706;
+  --warning-text: #b45309;
   --info-bg: #eff6ff;
-  --info-text: #2563eb;
+  --info-text: #1d4ed8;
+  
   --radius: 12px;
   --radius-sm: 8px;
   --radius-lg: 16px;
-  --shadow-sm: 0 1px 2px rgba(15,23,42,0.04), 0 1px 3px rgba(15,23,42,0.06);
-  --shadow-md: 0 4px 12px rgba(15,23,42,0.06), 0 1px 3px rgba(15,23,42,0.04);
-  --shadow-lg: 0 12px 32px rgba(15,23,42,0.08), 0 4px 8px rgba(15,23,42,0.04);
-  --shadow-xl: 0 20px 40px rgba(15,23,42,0.12);
+  
+  /* Crisp, minimal shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
   --transition: 200ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0f1220;
-    --foreground: #e8eaf0;
-    --surface: #1a1d2e;
-    --surface-muted: #22273d;
-    --border: #2e3352;
-    --primary-50: #eef2ff;
-    --primary-100: #c7d2fe;
-    --primary-200: #a5b4fc;
-    --primary-300: #818cf8;
-    --primary-400: #6366f1;
-    --primary-500: #6366f1;
-    --primary-600: #818cf8;
-    --primary-700: #a5b4fc;
-    --primary-800: #c7d2fe;
-    --primary-900: #eef2ff;
-    --shadow-sm: 0 1px 2px rgba(0,0,0,0.2), 0 1px 3px rgba(0,0,0,0.16);
-    --shadow-md: 0 4px 12px rgba(0,0,0,0.25), 0 1px 3px rgba(0,0,0,0.16);
-    --shadow-lg: 0 12px 32px rgba(0,0,0,0.3), 0 4px 8px rgba(0,0,0,0.16);
-    --shadow-xl: 0 20px 40px rgba(0,0,0,0.4);
+    /* High contrast minimal dark mode */
+    --background: #09090b;
+    --foreground: #fafafa;
+    --surface: #18181b;
+    --surface-muted: #27272a;
+    --border: #3f3f46;
+    
+    --primary-50: #eff6ff;
+    --primary-100: #dbeafe;
+    --primary-200: #bfdbfe;
+    --primary-300: #93c5fd;
+    --primary-400: #60a5fa;
+    --primary-500: #3b82f6;
+    --primary-600: #60a5fa;
+    --primary-700: #93c5fd;
+    --primary-800: #bfdbfe;
+    --primary-900: #dbeafe;
+    
+    --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.5);
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
   }
 }
 
@@ -110,11 +113,13 @@ body {
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 999px; }
-::-webkit-scrollbar-thumb:hover { background: #9aa6c8; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary-300); }
 
 /* ── Drag preview ─────────────────────────────────────────── */
 .dragging-item {
   opacity: 0.5;
+  transform: scale(0.95);
+  transition: transform var(--transition);
 }
 
 /* ── Drop zone highlight ──────────────────────────────────── */
@@ -122,31 +127,37 @@ body {
   outline: 2px dashed var(--primary-500);
   outline-offset: -2px;
   background: var(--primary-50) !important;
+  transform: scale(1.02);
+  transition: all var(--transition);
 }
 
 @media (prefers-color-scheme: dark) {
   .drop-zone-active {
     outline-color: var(--primary-400);
-    background: rgba(99,102,241,0.08) !important;
+    background: rgba(59, 130, 246, 0.15) !important;
   }
 }
 
-/* ── Toast animations ─────────────────────────────────────── */
+/* ── Animations ─────────────────────────────────────── */
 @keyframes toast-in {
   from { transform: translateY(16px); opacity: 0; }
   to   { transform: translateY(0);    opacity: 1; }
 }
 
-/* ── Selection bar slide up ────────────────────────────────── */
 @keyframes slide-up {
   from { transform: translate(-50%, 0); opacity: 0; }
   to   { transform: translate(-50%, -100%);  opacity: 1; }
 }
 
-/* ── Skeleton shimmer ─────────────────────────────────────── */
 @keyframes shimmer {
   from { background-position: -200% 0; }
   to   { background-position:   200% 0; }
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0px); }
 }
 
 .skeleton {
@@ -157,4 +168,17 @@ body {
   );
   background-size: 200% 100%;
   animation: shimmer 1.8s ease-in-out infinite;
+}
+
+/* Minimal Glassmorphism utility */
+.glass {
+  background: var(--surface);
+  border: 1px solid var(--border);
+}
+
+@media (prefers-color-scheme: dark) {
+  .glass {
+    background: var(--surface);
+    border: 1px solid var(--border);
+  }
 }
