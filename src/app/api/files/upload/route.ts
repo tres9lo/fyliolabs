@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseClientForAPI } from "@/lib/supabase-api";
 import { uploadFile } from "@/lib/file-service";
 
+export const maxDuration = 60; // Allow up to 60 seconds for uploads
+
 export async function POST(request: NextRequest) {
   try {
     const { supabase } = createSupabaseClientForAPI(request, true);

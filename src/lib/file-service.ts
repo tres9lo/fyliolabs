@@ -57,7 +57,7 @@ export async function uploadFile(
       const stream = cloudinary.uploader.upload_stream(
         {
           folder: "fyliolabs",
-          resource_type: "auto",
+          resource_type: fileType === "video" ? "video" : "auto",
           use_filename: true,
           unique_filename: true,
         },
