@@ -29,7 +29,7 @@ export function SystemStatsSettings() {
       if (filesRes.success && foldersRes.success) {
         const filesData = filesRes.data ?? [];
         const foldersData = foldersRes.data ?? [];
-        const totalSize = filesData.reduce((acc: number, cur: any) => acc + (cur.size || 0), 0);
+        const totalSize = filesData.reduce((acc: number, cur: any) => acc + (cur.file_size || 0), 0);
 
         setStats({
           foldersCount: foldersData.length,
@@ -107,7 +107,7 @@ export function SystemStatsSettings() {
         </div>
         <div className="w-full bg-gray-100 dark:bg-gray-800 h-3 rounded-full overflow-hidden shadow-inner border border-gray-200/50 dark:border-gray-850">
           <div
-            className="bg-gradient-to-r from-blue-500 to-indigo-600 h-full rounded-full transition-all duration-1000"
+            className="bg-primary-500 h-full rounded-full transition-all duration-1000"
             style={{ width: `${percentUsed}%` }}
           />
         </div>
