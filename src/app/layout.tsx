@@ -8,8 +8,68 @@ import { getMessages, getLocale } from "next-intl/server";
 import Script from "next/script";
 
 export const metadata: Metadata = {
-  title: "Fyliolabs - Cloud File Orchestration",
-  description: "Multi-tenant cloud file management platform",
+  title: {
+    default: "Fyliolabs - Secure Cloud File Orchestration",
+    template: "%s | Fyliolabs"
+  },
+  description: "Experience premium, secure multi-tenant cloud storage, document workspace creation, and file conversion orchestration. Built for modern builders by Objective-Dev.",
+  applicationName: "Fyliolabs",
+  authors: [{ name: "Trésor Dev Biko", url: "https://tresor-dev.vercel.app" }],
+  generator: "Next.js",
+  keywords: ["cloud file management", "secure document workspace", "cloudinary orchestrator", "file converter", "Supabase multi-tenant storage", "Objective-Dev"],
+  referrer: "origin-when-cross-origin",
+  creator: "Objective-Dev",
+  publisher: "Objective-Dev",
+  formatDetection: {
+    email: false,
+    address: false,
+    telephone: false,
+  },
+  metadataBase: new URL("https://objective-dev.vercel.app"),
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "Fyliolabs - Secure Cloud File Orchestration",
+    description: "Experience premium, secure multi-tenant cloud storage, document workspace creation, and file conversion orchestration. Built for modern builders by Objective-Dev.",
+    url: "https://objective-dev.vercel.app",
+    siteName: "Fyliolabs",
+    images: [
+      {
+        url: "/companybanner.png",
+        width: 1200,
+        height: 630,
+        alt: "Fyliolabs Premium Cloud Orchestrator Banner",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Fyliolabs - Secure Cloud File Orchestration",
+    description: "Experience premium, secure multi-tenant cloud storage, document workspace creation, and file conversion orchestration. Built for modern builders by Objective-Dev.",
+    creator: "@_.iamtres",
+    images: ["/companybanner.png"],
+  },
+  icons: {
+    icon: "/image.png",
+    shortcut: "/image.png",
+    apple: "/image.png",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
 };
 
 export default async function RootLayout({
