@@ -4,13 +4,22 @@ import { useAuth } from "@/components/providers/supabase-provider";
 import { Avatar } from "@/components/ui/avatar";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { useState, useRef, useEffect } from "react";
 import {
   Search,
   Bell,
   ChevronRight,
   Loader2,
+  FileText,
+  Folder as FolderIcon
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+
+interface ActivityRecord {
+  id: string;
+  name: string;
+  type: "file" | "folder";
+  created_at: string;
+}
 
 const PAGE_TITLES: Record<string, string> = {
   "/": "dashboard.title",
@@ -24,6 +33,50 @@ export function TopBar() {
   const { user, loading } = useAuth();
   const pathname = usePathname();
   const t = useTranslations();
+  
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [activities, setActivities] = useState<ActivityRecord[]>([]);
+  const [loadingActivities, setLoadingActivities] = useState(false);
+  const notificationRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(event: MouseEvent) {
+      if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+        setShowNotifications(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  const fetchActivities = async () => {
+    setLoadingActivities(true);
+    try {
+      const res = await fetch("/api/search?sort=created_at&order=desc");
+      const json = await res.json();
+      if (json.success) {
+        // Merge and sort files and folders
+        const files: ActivityRecord[] = json.data.files.map((f: any) => ({ ...f, type: "file" }));
+        const folders: ActivityRecord[] = json.data.folders.map((f: any) => ({ ...f, type: "folder" }));
+        const merged = [...files, ...folders].sort((a, b) => 
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        ).slice(0, 5); // top 5 recent activities
+        
+        setActivities(merged);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setLoadingActivities(false);
+    }
+  };
+
+  const toggleNotifications = () => {
+    if (!showNotifications) {
+      fetchActivities();
+    }
+    setShowNotifications(!showNotifications);
+  };
 
   if (loading) {
     return (
@@ -62,10 +115,56 @@ export function TopBar() {
           <span className="hidden sm:inline">Search... ⌘K</span>
         </button>
         
-        <button className="relative p-2 text-gray-400 hover:text-primary-600 transition-colors">
-          <Bell className="h-5 w-5" />
-          <span className="absolute top-1.5 right-2 h-2 w-2 bg-rose-500 rounded-full border-2 border-white dark:border-gray-900"></span>
-        </button>
+        <div className="relative" ref={notificationRef}>
+          <button 
+            onClick={toggleNotifications}
+            className="relative p-2 text-gray-400 hover:text-primary-600 transition-colors"
+          >
+            <Bell className="h-5 w-5" />
+            <span className="absolute top-1.5 right-2 h-2 w-2 bg-rose-500 rounded-full border-2 border-white dark:border-gray-900"></span>
+          </button>
+
+          {/* Notifications Dropdown */}
+          {showNotifications && (
+            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
+              <div className="p-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
+                <h3 className="font-semibold text-sm text-gray-900 dark:text-white">Recent Activity</h3>
+              </div>
+              <div className="max-h-80 overflow-y-auto">
+                {loadingActivities ? (
+                  <div className="p-6 flex justify-center">
+                    <Loader2 className="h-5 w-5 animate-spin text-primary-500" />
+                  </div>
+                ) : activities.length === 0 ? (
+                  <div className="p-6 text-center text-sm text-gray-500">
+                    No recent activity.
+                  </div>
+                ) : (
+                  <div className="divide-y divide-gray-100 dark:divide-gray-700">
+                    {activities.map((activity) => (
+                      <div key={activity.id} className="p-3 hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors flex items-start gap-3">
+                        <div className={`p-2 rounded-lg mt-0.5 ${activity.type === 'folder' ? 'bg-indigo-50 text-indigo-500 dark:bg-indigo-500/10' : 'bg-green-50 text-green-500 dark:bg-green-500/10'}`}>
+                          {activity.type === 'folder' ? <FolderIcon className="h-4 w-4" /> : <FileText className="h-4 w-4" />}
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-900 dark:text-white truncate max-w-[200px]">
+                            {activity.name}
+                          </p>
+                          <p className="text-xs text-gray-500 dark:text-gray-400">
+                            {activity.type === 'folder' ? 'Folder created' : 'File uploaded'} &middot; {new Date(activity.created_at).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="p-2 border-t border-gray-100 dark:border-gray-700 text-center">
+                <a href="/search" className="text-xs font-medium text-primary-600 hover:text-primary-700 p-1">View all activity</a>
+              </div>
+            </div>
+          )}
+        </div>
 
         {fullName && (
           <div className="flex items-center gap-3 pl-4 border-l border-[var(--border)] cursor-pointer group">
