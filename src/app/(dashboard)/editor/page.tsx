@@ -671,7 +671,7 @@ export default function EditorPage() {
                           onKeyUp={saveSelection}
                           className="min-h-[500px] outline-none text-slate-900 dark:text-white font-sans text-sm focus:outline-none cursor-text leading-relaxed select-text word-editor-canvas"
                           style={{ minHeight: "500px" }}
-                          placeholder="Click here and start typing, just like in Microsoft Word..."
+                          {...({ placeholder: "Click here and start typing, just like in Microsoft Word..." } as any)}
                         />
                       </div>
                     </div>
