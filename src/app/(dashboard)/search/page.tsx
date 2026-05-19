@@ -174,23 +174,47 @@ export default function SearchPage() {
       {/* Folder Modals */}
       {editingFolder && (
         <EditFolderModal
+          isOpen={true}
           folder={editingFolder}
           onClose={() => setEditingFolder(null)}
-          onSuccess={(updated) => setResults(prev => ({
-            ...prev,
-            folders: prev.folders.map(f => f.id === updated.id ? updated : f)
-          }))}
+          onUpdate={async (id, data) => {
+            const res = await fetch(`/api/folders/${id}`, {
+              method: "PUT",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
+            });
+            const json = await res.json();
+            if (json.success) {
+              setResults(prev => ({
+                ...prev,
+                folders: prev.folders.map(f => f.id === id ? { ...f, ...data } : f)
+              }));
+              setEditingFolder(null);
+            } else {
+              throw new Error(json.error || "Update failed");
+            }
+          }}
         />
       )}
 
       {deletingFolder && (
         <DeleteFolderModal
+          isOpen={true}
           folder={deletingFolder}
           onClose={() => setDeletingFolder(null)}
-          onSuccess={() => setResults(prev => ({
-            ...prev,
-            folders: prev.folders.filter(f => f.id !== deletingFolder.id)
-          }))}
+          onDelete={async (id) => {
+            const res = await fetch(`/api/folders/${id}`, { method: "DELETE" });
+            const json = await res.json();
+            if (json.success) {
+              setResults(prev => ({
+                ...prev,
+                folders: prev.folders.filter(f => f.id !== id)
+              }));
+              setDeletingFolder(null);
+            } else {
+              throw new Error(json.error || "Delete failed");
+            }
+          }}
         />
       )}
     </div>
