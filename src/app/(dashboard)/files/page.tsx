@@ -213,13 +213,26 @@ export default function FilesPage() {
 
         {/* Your Files section */}
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
-            <FolderOpen className="h-5 w-5 text-primary-500" />
-            {t("files.yourFiles")}
-            <span className="text-sm font-normal text-gray-400">
-              {currentFolderId ? `(${folderLabel})` : ""}
-            </span>
-          </h2>
+          <div className="flex items-center gap-3">
+            <h2 className="text-lg font-semibold text-gray-900 dark:text-white flex items-center gap-2">
+              <FolderOpen className="h-5 w-5 text-primary-500" />
+              {t("files.yourFiles")}
+              <span className="text-sm font-normal text-gray-400">
+                {currentFolderId ? `(${folderLabel})` : ""}
+              </span>
+            </h2>
+            {currentFolderId && (
+              <a
+                href={`/api/folders/${currentFolderId}/download`}
+                download={`${folderLabel}.zip`}
+                className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-primary-600 hover:text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/30 border border-primary-200 dark:border-primary-800 rounded-lg transition-colors"
+                title="Download folder as ZIP"
+              >
+                <Download className="h-3.5 w-3.5" />
+                Download ZIP
+              </a>
+            )}
+          </div>
           {files.length > 0 && (
             <span className="text-sm text-gray-500 dark:text-gray-400 font-medium">
               {files.length} file{files.length !== 1 ? "s" : ""}

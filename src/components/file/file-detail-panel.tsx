@@ -4,7 +4,7 @@ import { useState, useEffect, useMemo, useCallback } from "react";
 import { X, Save, Trash2, ExternalLink, Image as ImageIcon, Film, Music, FileText, Download, FolderOpen, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { formatFileSize } from "@/lib/utils";
+import { formatFileSize, getCloudinaryDownloadUrl } from "@/lib/utils";
 import { useTranslations } from "next-intl";
 import type { FileRecord } from "@/types/file";
 import type { Folder } from "@/types/folder";
@@ -39,8 +39,69 @@ export function FileDetailPanel({ file, onClose, onUpdate, onDelete, onConvert }
   const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
   const [moving, setMoving] = useState(false);
 
+  // Text Editor state
+  const [textContent, setTextContent] = useState<string | null>(null);
+  const [originalTextContent, setOriginalTextContent] = useState<string | null>(null);
+  const [loadingText, setLoadingText] = useState(false);
+  const [savingText, setSavingText] = useState(false);
+
   const t = useTranslations("fileDetail");
   const tCommon = useTranslations("common");
+
+  const isEditableTextFile = useCallback((fileRecord: FileRecord) => {
+    const editableExtensions = ["txt", "md", "json", "csv", "js", "ts", "tsx", "html", "css", "xml", "py", "sh"];
+    const ext = fileRecord.name.split('.').pop()?.toLowerCase() || "";
+    return fileRecord.mime_type.startsWith("text/") || editableExtensions.includes(ext);
+  }, []);
+
+  useEffect(() => {
+    if (file && isEditableTextFile(file)) {
+      setLoadingText(true);
+      setTextContent(null);
+      setOriginalTextContent(null);
+      setError(null);
+      fetch(file.cloudinary_url)
+        .then((res) => {
+          if (!res.ok) throw new Error("Failed to load content");
+          return res.text();
+        })
+        .then((text) => {
+          setTextContent(text);
+          setOriginalTextContent(text);
+        })
+        .catch((err: unknown) => {
+          setError(err instanceof Error ? err.message : "Error fetching text file");
+        })
+        .finally(() => {
+          setLoadingText(false);
+        });
+    }
+  }, [file, isEditableTextFile]);
+
+  const handleSaveTextContent = async () => {
+    if (!file || textContent === null) return;
+    setSavingText(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/files/${file.id}/content`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ content: textContent }),
+      });
+      const json = await res.json();
+      if (res.ok && json.success) {
+        setOriginalTextContent(textContent);
+        onUpdate(json.data);
+        toast.success(tCommon("success"), { description: "File content updated successfully" });
+      } else {
+        setError(json.error || "Failed to save file content");
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Error saving text file");
+    } finally {
+      setSavingText(false);
+    }
+  };
 
   useEffect(() => {
     void fetchFolders().then(setFolders);
@@ -255,6 +316,34 @@ export function FileDetailPanel({ file, onClose, onUpdate, onDelete, onConvert }
                   Your browser does not support the audio element.
                 </audio>
               </div>
+            ) : isEditableTextFile(file) ? (
+              <div className="w-full flex flex-col h-72 rounded-xl overflow-hidden bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700">
+                <div className="flex items-center justify-between px-3 py-1.5 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
+                  <span className="text-[10px] font-bold text-gray-450 uppercase tracking-wider">Editor</span>
+                  {textContent !== originalTextContent && (
+                    <Button
+                      size="sm"
+                      onClick={handleSaveTextContent}
+                      isLoading={savingText}
+                      icon={<Save className="h-3.5 w-3.5" />}
+                    >
+                      Save Changes
+                    </Button>
+                  )}
+                </div>
+                {loadingText ? (
+                  <div className="flex-1 flex items-center justify-center">
+                    <Loader2 className="h-5 w-5 animate-spin text-primary-500" />
+                  </div>
+                ) : (
+                  <textarea
+                    value={textContent || ""}
+                    onChange={(e) => setTextContent(e.target.value)}
+                    className="flex-1 w-full p-3 font-mono text-xs bg-transparent border-none outline-none resize-none text-gray-850 dark:text-gray-200 focus:ring-0 leading-relaxed"
+                    placeholder="Empty file. Type here..."
+                  />
+                )}
+              </div>
             ) : (
               <div className="py-8">
                 {getFileIcon()}
@@ -417,6 +506,14 @@ export function FileDetailPanel({ file, onClose, onUpdate, onDelete, onConvert }
             {tCommon("delete")}
           </Button>
           <div className="flex-1" />
+          <a
+            href={getCloudinaryDownloadUrl(file.cloudinary_url, file.name)}
+            download={file.name}
+            className="inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-sm font-semibold border border-[var(--border)] hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
+          >
+            <Download className="h-4 w-4" />
+            Download
+          </a>
           <Button variant="secondary" onClick={onClose}>
             {tCommon("cancel")}
           </Button>

@@ -25,3 +25,13 @@ export function formatDate(dateStr: string): string {
     year: "numeric",
   });
 }
+
+export function getCloudinaryDownloadUrl(url: string, filename?: string): string {
+  if (!url.includes("cloudinary.com")) return url;
+  
+  // Example Cloudinary URL: https://res.cloudinary.com/demo/image/upload/v12345/file.png
+  // To force download: insert fl_attachment before the version/folder path.
+  // We can just replace '/upload/' with `/upload/fl_attachment${filename ? `:${encodeURIComponent(filename)}` : ''}/`
+  const attachmentStr = filename ? `fl_attachment:${encodeURIComponent(filename)}` : 'fl_attachment';
+  return url.replace('/upload/', `/upload/${attachmentStr}/`);
+}
