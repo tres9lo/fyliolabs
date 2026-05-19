@@ -20,37 +20,63 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    let query = supabase
+    // 1. Files Query
+    let filesQuery = supabase
       .from("files")
       .select("*")
       .eq("user_id", user.id);
 
-    // Full-text search if query provided
     if (q) {
-      query = query.textSearch("search_vector", q, {
-        type: "websearch",
-        config: "simple",
-      });
+      // Partial matching for files
+      filesQuery = filesQuery.or(`display_name.ilike.%${q}%,name.ilike.%${q}%`);
     }
 
-    // Filter by tags (overlap)
     if (tags.length > 0) {
-      query = query.overlaps("tags", tags);
+      filesQuery = filesQuery.overlaps("tags", tags);
     }
 
     // Sorting validation
     const allowedSorts = ["created_at", "name", "file_size", "updated_at"];
     if (allowedSorts.includes(sort)) {
-      query = query.order(sort, { ascending: order === "asc" });
+      filesQuery = filesQuery.order(sort, { ascending: order === "asc" });
     } else {
-      query = query.order("created_at", { ascending: false });
+      filesQuery = filesQuery.order("created_at", { ascending: false });
     }
 
-    const { data: files, error } = await query;
+    // 2. Folders Query (No tags for folders usually, so just search name)
+    let foldersQuery = supabase
+      .from("folders")
+      .select("*")
+      .eq("user_id", user.id);
 
-    if (error) throw error;
+    if (q) {
+      // Partial matching for folders
+      foldersQuery = foldersQuery.ilike("name", `%${q}%`);
+    }
 
-    return NextResponse.json({ success: true, data: files });
+    const folderSorts = ["created_at", "name", "updated_at"];
+    if (folderSorts.includes(sort)) {
+      foldersQuery = foldersQuery.order(sort, { ascending: order === "asc" });
+    } else {
+      foldersQuery = foldersQuery.order("created_at", { ascending: false });
+    }
+
+    // Execute both in parallel
+    const [filesResult, foldersResult] = await Promise.all([
+      filesQuery,
+      foldersQuery
+    ]);
+
+    if (filesResult.error) throw filesResult.error;
+    if (foldersResult.error) throw foldersResult.error;
+
+    return NextResponse.json({ 
+      success: true, 
+      data: { 
+        files: filesResult.data, 
+        folders: foldersResult.data 
+      } 
+    });
   } catch (error: unknown) {
     const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(

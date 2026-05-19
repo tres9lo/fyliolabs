@@ -4,7 +4,7 @@ import { createSupabaseServerClient } from "@/lib/server-supabase";
 import { SupabaseProvider } from "@/components/providers/supabase-provider";
 import { ToastProvider } from "@/components/providers/toast-provider";
 import { NextIntlClientProvider } from "next-intl";
-import { getMessages } from "next-intl/server";
+import { getMessages, getLocale } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Fyliolabs - Cloud File Orchestration",
@@ -19,10 +19,11 @@ export default async function RootLayout({
   const supabase = await createSupabaseServerClient();
   const { data: { session } } = await supabase.auth.getSession();
   const messages = await getMessages();
+  const locale = await getLocale();
 
   return (
     <html
-      lang="en"
+      lang={locale}
       style={{ fontFamily: "'DM Sans', system-ui, sans-serif" }}
       suppressHydrationWarning
     >
@@ -43,7 +44,7 @@ export default async function RootLayout({
       </head>
       <body className="min-h-full flex flex-col">
         <SupabaseProvider initialSession={session}>
-          <NextIntlClientProvider messages={messages}>
+          <NextIntlClientProvider messages={messages} locale={locale}>
             <ToastProvider>{children}</ToastProvider>
           </NextIntlClientProvider>
         </SupabaseProvider>

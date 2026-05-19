@@ -23,7 +23,7 @@
     "newFolder": "Folda Mpya",
     "editFolder": "Hariri Folda",
     "deleteFolder": "Futa folda?",
-    "deleteConfirm": "Hii itafuta \"{name}\" na watoto wake kwa sababu. Hii haiwezi kutekelezwa.",
+    "deleteConfirm": "Hii itafuta \"{name}\" na watoto wake. Hii haiwezi kutekelezwa.",
     "folderName": "Jina la Folda",
     "description": "Maelezo (kuchagua)",
     "createFolder": "Unda"
@@ -95,14 +95,15 @@
   },
   "files": {
     "title": "Faili",
-    "subtitle": "Pakia na дhabiti faili zako",
+    "subtitle": "Pakia na dhibit faili zako",
     "uploadLabel": "Pakia kwenye folda (kuchagua)",
     "uploadZonePrompt": "Buruza na kuacha faili hapa, au bofya kuchagua",
     "uploadZoneLimit": "Saizi ya juu 100MB. Picha, video, sauti, waraka vinatumika.",
     "yourFiles": "Faili Zako",
     "noFiles": "Hakuna faili zilizopakiwa",
     "dropIntoFolder": "Dondosha faili kwenye folda",
-    "currentFolder": "Folda ya Sasa"
+    "currentFolder": "Folda ya Sasa",
+    "allFiles": "Faili Zote"
   },
   "folders": {
     "title": "Folda",
@@ -113,6 +114,40 @@
     "editFolder": "Hariri Folda",
     "deleteFolder": "Futa folda?",
     "deleteConfirm": "Hii itafuta \"{name}\" na watoto wake. Hii haiwezi kutekelezwa.",
+    "movedToFolder": "Faili limehameishwa kwenye folda",
+    "moveToFolder": "Hamisha kwenye Folda",
+    "moving": "Inahama..."
+  },
+  "search": {
+    "title": "Tafuta",
+    "subtitle": "Pata faili kwa jina, maelezo, au lebo",
+    "searchPlaceholder": "Tafuta faili...",
+    "tagsLabel": "Lebo (tenganisha kwa koma)",
+    "tagsPlaceholder": "lebo1, lebo2",
+    "searchButton": "Tafuta",
+    "resetButton": "Weka upya",
+    "results": "Matokeo ({count})",
+    "noResults": "Hakuna faili zilizopatikana"
+  },
+  "fileDetail": {
+    "title": "Maelezo ya Faili",
+    "metadata": "Maelezo ya Ziada",
+    "size": "Saizi",
+    "type": "Aina",
+    "dimensions": "Mipaka",
+    "mime": "MIME",
+    "created": "Imeundwa",
+    "viewOriginal": "Tazama asili",
+    "convertFile": "Badilisha Faili",
+    "conversion": "Ubadilishaji",
+    "public": "Hadhi",
+    "save": "Hifadhi",
+    "cancel": "Ghairi",
+    "delete": "Futa",
+    "deleteConfirm": "Hii itafuta \"{name}\" na watoto wake. Hii haiwezi kutekelezwa.",
+    "saving": "Inahifadhi...",
+    "error": "Hitilafu",
+    "success": "Mafanikio",
     "movedToFolder": "Faili limehameishwa kwenye folda",
     "moveToFolder": "Hamisha kwenye Folda",
     "moving": "Inahama..."

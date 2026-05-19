@@ -106,7 +106,10 @@
     "uploadZonePrompt": "Glissez-déposez un fichier ici, ou cliquez pour sélectionner",
     "uploadZoneLimit": "Taille max 100MB. Images, vidéos, audio, documents acceptés.",
     "yourFiles": "Vos fichiers",
-    "noFiles": "Aucun fichier téléchargé"
+    "noFiles": "Aucun fichier téléchargé",
+    "dropIntoFolder": "Déposer des fichiers dans un dossier",
+    "currentFolder": "Dossier actuel",
+    "allFiles": "Tous les fichiers"
   },
   "folders": {
     "title": "Dossiers",

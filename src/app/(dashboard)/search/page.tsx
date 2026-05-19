@@ -1,24 +1,36 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Card from "@/components/ui/card";
 import Input from "@/components/ui/input";
-import  Button  from "@/components/ui/button";
+import Button from "@/components/ui/button";
 import { FileList } from "@/components/file/file-list";
+import { FolderGrid } from "@/components/folder/folder-grid";
 import { FileDetailPanel } from "@/components/file/file-detail-panel";
+import { EditFolderModal } from "@/components/folder/edit-folder-modal";
+import { DeleteFolderModal } from "@/components/folder/delete-folder-modal";
 import { Search, RotateCcw } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { FileRecord } from "@/types/file";
+import type { Folder } from "@/types/folder";
 
 export default function SearchPage() {
+  const router = useRouter();
   const [query, setQuery] = useState("");
   const [tagsInput, setTagsInput] = useState("");
   const [sortBy, setSortBy] = useState("created_at");
   const [order, setOrder] = useState<"asc" | "desc">("desc");
-  const [results, setResults] = useState<FileRecord[]>([]);
+  
+  const [results, setResults] = useState<{ files: FileRecord[]; folders: Folder[] }>({ files: [], folders: [] });
   const [loading, setLoading] = useState(false);
-  const [selectedFile, setSelectedFile] = useState<FileRecord | null>(null);
   const [searched, setSearched] = useState(false);
+  
+  const [selectedFile, setSelectedFile] = useState<FileRecord | null>(null);
+  
+  // Folder Modals
+  const [editingFolder, setEditingFolder] = useState<Folder | null>(null);
+  const [deletingFolder, setDeletingFolder] = useState<Folder | null>(null);
 
   const t = useTranslations();
 
@@ -32,7 +44,9 @@ export default function SearchPage() {
       if (order) params.set("order", order);
       const res = await fetch(`/api/search?${params}`);
       const json = await res.json();
-      if (json.success) setResults(json.data);
+      if (json.success) {
+        setResults(json.data);
+      }
     } catch (error) {
       console.error(error);
     } finally {
@@ -52,9 +66,13 @@ export default function SearchPage() {
     setTagsInput("");
     setSortBy("created_at");
     setOrder("desc");
-    setResults([]);
+    setResults({ files: [], folders: [] });
     setSearched(false);
     setSelectedFile(null);
+  };
+
+  const handleFolderNavigate = (folder: Folder) => {
+    router.push(`/files?folder=${folder.id}`);
   };
 
   return (
@@ -103,28 +121,78 @@ export default function SearchPage() {
         </form>
       </Card>
 
-      <div>
-        {searched && (
+      {searched && (
+        <div className="space-y-8">
           <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
-            {t("search.results", { count: results.length })}
+            {t("search.results", { count: results.files.length + results.folders.length })}
           </h2>
-        )}
-        <Card className="p-6">
-          <FileList
-            files={results}
-            loading={loading}
-            emptyMessage={t("search.noResults")}
-            onFileClick={setSelectedFile}
-          />
-        </Card>
-      </div>
+          
+          {/* Folders Section */}
+          {(results.folders.length > 0 || loading) && (
+            <div className="space-y-4">
+              <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-800 pb-2">
+                Found Folders ({results.folders.length})
+              </h3>
+              <FolderGrid
+                folders={results.folders}
+                onRename={setEditingFolder}
+                onDelete={setDeletingFolder}
+                onNavigate={handleFolderNavigate}
+              />
+            </div>
+          )}
 
+          {/* Files Section */}
+          <div className="space-y-4">
+            <h3 className="text-md font-medium text-gray-700 dark:text-gray-300 border-b border-gray-200 dark:border-gray-800 pb-2">
+              Found Files ({results.files.length})
+            </h3>
+            <FileList
+              files={results.files}
+              loading={loading}
+              emptyMessage={t("search.noResults")}
+              onFileClick={setSelectedFile}
+            />
+          </div>
+        </div>
+      )}
+
+      {/* File Detail Modal */}
       <FileDetailPanel
         file={selectedFile}
         onClose={() => setSelectedFile(null)}
-        onUpdate={(updated) => setResults(prev => prev.map(f => f.id === updated.id ? updated : f))}
-        onDelete={(id) => setResults(prev => prev.filter(f => f.id !== id))}
+        onUpdate={(updated) => setResults(prev => ({
+          ...prev,
+          files: prev.files.map(f => f.id === updated.id ? updated : f)
+        }))}
+        onDelete={(id) => setResults(prev => ({
+          ...prev,
+          files: prev.files.filter(f => f.id !== id)
+        }))}
       />
+
+      {/* Folder Modals */}
+      {editingFolder && (
+        <EditFolderModal
+          folder={editingFolder}
+          onClose={() => setEditingFolder(null)}
+          onSuccess={(updated) => setResults(prev => ({
+            ...prev,
+            folders: prev.folders.map(f => f.id === updated.id ? updated : f)
+          }))}
+        />
+      )}
+
+      {deletingFolder && (
+        <DeleteFolderModal
+          folder={deletingFolder}
+          onClose={() => setDeletingFolder(null)}
+          onSuccess={() => setResults(prev => ({
+            ...prev,
+            folders: prev.folders.filter(f => f.id !== deletingFolder.id)
+          }))}
+        />
+      )}
     </div>
   );
 }
