@@ -99,11 +99,12 @@ export async function POST(request: NextRequest) {
 
     const zipBytes = Buffer.from(zip.toBuffer());
 
-    const response = new NextResponse(new Uint8Array(zipBytes.buffer, zipBytes.byteOffset, zipBytes.byteLength), {
+    const response = new NextResponse(new Uint8Array(zipBytes.buffer, zipBytes.byteOffset, zipBytes.byteLength) as any, {
       status: 200,
       headers: {
         "Content-Type": "application/zip",
         "Content-Disposition": `attachment; filename="fyliolabs_${user.id}_${Date.now()}.zip"`,
+        "Content-Length": zipBytes.length.toString(),
       },
     });
 

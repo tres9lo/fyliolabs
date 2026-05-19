@@ -6,6 +6,7 @@ import { UploadZone } from "@/components/file/upload-zone";
 import { FileList } from "@/components/file/file-list";
 import { FileDetailPanel } from "@/components/file/file-detail-panel";
 import { Button } from "@/components/ui/button";
+import { downloadWithProgress } from "@/lib/download";
 import { Download, FolderOpen, Loader2, ArrowUp } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { toast } from "sonner";
@@ -25,6 +26,33 @@ export default function FilesPage() {
   const [selectedFile, setSelectedFile] = useState<FileRecord | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
   const [moving, setMoving] = useState(false);
+  const [mounted, setMounted] = useState(false);
+
+  // Download progress states
+  const [downloadFilename, setDownloadFilename] = useState<string | null>(null);
+  const [downloadPercent, setDownloadPercent] = useState<number | null>(null);
+
+  const handleStartDownload = useCallback(async (url: string, filename: string, options?: RequestInit) => {
+    setDownloadFilename(filename);
+    setDownloadPercent(0);
+    try {
+      await downloadWithProgress(url, filename, (percent) => {
+        setDownloadPercent(percent);
+      }, options);
+      toast.success("Success", { description: `Downloaded "${filename}"` });
+    } catch (err: unknown) {
+      toast.error("Error", { description: err instanceof Error ? err.message : "Download failed" });
+    } finally {
+      setTimeout(() => {
+        setDownloadPercent(null);
+        setDownloadFilename(null);
+      }, 1000);
+    }
+  }, []);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const loadBreadcrumb = useCallback(async () => {
     if (currentFolderId === null) { setCurrentFolder(null); return; }
@@ -111,31 +139,13 @@ export default function FilesPage() {
 
   const handleDownloadZip = async () => {
     if (selectedIds.length === 0) return;
-    try {
-      const res = await fetch("/api/files/zip", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ fileIds: selectedIds }),
-      });
-      if (res.ok) {
-        const blob = await res.blob();
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement("a");
-        a.href = url;
-        a.download = `fyliolabs_files_${Date.now()}.zip`;
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        window.URL.revokeObjectURL(url);
-        clearSelection();
-        toast.success(tCommon("success"), { description: "ZIP downloaded" });
-      } else {
-        const json = await res.json();
-        throw new Error(json.error || "Failed to create ZIP");
-      }
-    } catch (err: unknown) {
-      toast.error(tCommon("error"), { description: err instanceof Error ? err.message : "ZIP error" });
-    }
+    const filename = `fyliolabs_files_${Date.now()}.zip`;
+    await handleStartDownload("/api/files/zip", filename, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ fileIds: selectedIds }),
+    });
+    clearSelection();
   };
 
   const handleFileConvert = (newFile: FileRecord) => {
@@ -221,16 +231,15 @@ export default function FilesPage() {
                 {currentFolderId ? `(${folderLabel})` : ""}
               </span>
             </h2>
-            {currentFolderId && (
-              <a
-                href={`/api/folders/${currentFolderId}/download`}
-                download={`${folderLabel}.zip`}
-                className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-primary-600 hover:text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/30 border border-primary-200 dark:border-primary-800 rounded-lg transition-colors"
+            {mounted && currentFolderId && (
+              <button
+                onClick={() => handleStartDownload(`/api/folders/${currentFolderId}/download`, `${folderLabel}.zip`)}
+                className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-semibold text-primary-600 hover:text-primary-500 hover:bg-primary-50 dark:hover:bg-primary-900/30 border border-primary-200 dark:border-primary-800 rounded-lg transition-colors cursor-pointer"
                 title="Download folder as ZIP"
               >
                 <Download className="h-3.5 w-3.5" />
                 Download ZIP
-              </a>
+              </button>
             )}
           </div>
           {files.length > 0 && (
@@ -274,12 +283,28 @@ export default function FilesPage() {
         onUpdate={handleFileUpdate}
         onDelete={handleFileDelete}
         onConvert={handleFileConvert}
+        onDownload={handleStartDownload}
       />
 
       {moving && (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 bg-primary-600 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 z-50 text-sm animate-[slide-up_250ms_ease-out]">
           <Loader2 className="h-4 w-4 animate-spin" />
           {tFileDetail("moving")}
+        </div>
+      )}
+
+      {downloadPercent !== null && downloadFilename && (
+        <div className="fixed bottom-6 right-6 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-xl rounded-2xl p-4 w-80 z-50 flex flex-col gap-2 animate-[slide-up_250ms_ease-out] glass">
+          <div className="flex items-center justify-between text-xs font-bold text-gray-500 dark:text-gray-400">
+            <span className="truncate max-w-[200px]">Downloading "{downloadFilename}"</span>
+            <span>{downloadPercent}%</span>
+          </div>
+          <div className="w-full bg-gray-200 dark:bg-gray-700 h-2 rounded-full overflow-hidden">
+            <div
+              className="bg-primary-600 h-full transition-all duration-150 ease-out"
+              style={{ width: `${downloadPercent}%` }}
+            />
+          </div>
         </div>
       )}
     </div>

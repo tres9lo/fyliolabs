@@ -74,11 +74,13 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     await addFolderToZip(rootFolder.id, "");
 
     const zipBuffer = zip.toBuffer();
+    const zipBytes = new Uint8Array(zipBuffer.buffer, zipBuffer.byteOffset, zipBuffer.byteLength);
 
-    return new NextResponse(zipBuffer, {
+    return new NextResponse(zipBytes as any, {
       headers: {
         "Content-Disposition": `attachment; filename="${rootFolder.name}.zip"`,
         "Content-Type": "application/zip",
+        "Content-Length": zipBytes.length.toString(),
       },
     });
   } catch (error: unknown) {
