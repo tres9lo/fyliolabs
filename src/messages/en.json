@@ -108,7 +108,10 @@
     "uploadZonePrompt": "Drag & drop a file here, or click to select",
     "uploadZoneLimit": "Max size 100MB. Images, videos, audio, documents supported.",
     "yourFiles": "Your Files",
-    "noFiles": "No files uploaded yet"
+    "noFiles": "No files uploaded yet",
+    "dropIntoFolder": "Drop files into a folder to move them",
+    "currentFolder": "Current Folder",
+    "allFiles": "All Files"
   },
   "folders": {
     "title": "Folders",
@@ -149,7 +152,10 @@
     "deleteConfirm": "This will permanently delete \"{name}\". This action cannot be undone.",
     "saving": "Saving...",
     "error": "Error",
-    "success": "Success"
+    "success": "Success",
+    "movedToFolder": "File moved to folder",
+    "moveToFolder": "Move to Folder",
+    "moving": "Moving..."
   },
   "toast": {
     "success": "Success",

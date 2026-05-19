@@ -59,7 +59,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     const body = await request.json();
 
     // Allowed updatable fields
-    const allowed = ["display_name", "description", "is_public", "tags"];
+    const allowed = ["display_name", "description", "is_public", "tags", "folder_id"];
     const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
 
     allowed.forEach((key) => {

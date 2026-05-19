@@ -103,7 +103,9 @@
     "uploadZonePrompt": "Kanda uhekeshe hano, canke usubiremo",
     "uploadZoneLimit": "Ingano ntare 100MB. Kugenda, video, audio, inyandiko.",
     "yourFiles": "Ibisanduku vyawe",
-    "noFiles": "Nta bisanduku vyiyandikisha"
+    "noFiles": "Nta bisanduku vyiyandikisha",
+    "dropIntoFolder": "Sohora ibisanduku mu ndango",
+    "currentFolder": "Indango yo"
   },
   "folders": {
     "title": "Indango",

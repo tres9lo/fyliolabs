@@ -1,12 +1,15 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { X, Save, Trash2, ExternalLink, Image as ImageIcon, Film, Music, FileText, Download } from "lucide-react";
+import { useState, useEffect, useMemo, useCallback } from "react";
+import { X, Save, Trash2, ExternalLink, Image as ImageIcon, Film, Music, FileText, Download, FolderOpen, Loader2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatFileSize } from "@/lib/utils";
 import { useTranslations } from "next-intl";
-import type { FileRecord } from "@/types/file";
+import type { FileRecord, Folder } from "@/types";
+import { toast } from "sonner";
+
+interface FolderOption { id: string; name: string; }
 
 interface FileDetailPanelProps {
   file: FileRecord | null;
@@ -14,6 +17,13 @@ interface FileDetailPanelProps {
   onUpdate: (updated: FileRecord) => void;
   onDelete: (id: string) => void;
   onConvert?: (newFile: FileRecord) => void;
+}
+
+async function fetchFolders(): Promise<FolderOption[]> {
+  const res = await fetch("/api/folders");
+  const json = await res.json();
+  if (json.success) return json.data as FolderOption[];
+  return [];
 }
 
 export function FileDetailPanel({ file, onClose, onUpdate, onDelete, onConvert }: FileDetailPanelProps) {
@@ -24,9 +34,58 @@ export function FileDetailPanel({ file, onClose, onUpdate, onDelete, onConvert }
   const [error, setError] = useState<string | null>(null);
   const [converting, setConverting] = useState(false);
   const [convertFormat, setConvertFormat] = useState("");
+  const [folders, setFolders] = useState<FolderOption[]>([]);
+  const [selectedFolder, setSelectedFolder] = useState<string | null>(null);
+  const [moving, setMoving] = useState(false);
 
   const t = useTranslations("fileDetail");
   const tCommon = useTranslations("common");
+
+  useEffect(() => {
+    void fetchFolders().then(setFolders);
+  }, []);
+
+  useEffect(() => {
+    if (file) {
+      setDisplayName(file.display_name);
+      setDescription(file.description || "");
+      setIsPublic(file.is_public);
+      setError(null);
+      setConverting(false);
+      setSelectedFolder(file.folder_id);
+      if (availableFormats.length > 0) {
+        const currentExt = file.name.split('.').pop()?.toLowerCase() || "";
+        const defaultFormat = availableFormats.includes(currentExt) && currentExt !== file.cloudinary_format
+          ? currentExt
+          : availableFormats[0];
+        setConvertFormat(defaultFormat);
+      }
+    }
+  }, [file]);
+
+  const handleMoveToFolder = useCallback(async () => {
+    if (!file) return;
+    setMoving(true);
+    setError(null);
+    try {
+      const res = await fetch(`/api/files/${file.id}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ folder_id: selectedFolder }),
+      });
+      const json = await res.json();
+      if (res.ok && json.success) {
+        onUpdate(json.data);
+        toast.success(tCommon("success"), { description: t("movedToFolder") });
+      } else {
+        setError(json.error || "Failed to move file");
+      }
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Move error");
+    } finally {
+      setMoving(false);
+    }
+  }, [file, selectedFolder, onUpdate, tCommon, t]);
 
   const conversionFormats = useMemo(() => ({
     image: ["jpg", "png", "webp", "avif", "gif"],
@@ -72,6 +131,7 @@ export function FileDetailPanel({ file, onClose, onUpdate, onDelete, onConvert }
           display_name: displayName,
           description: description,
           is_public: isPublic,
+          folder_id: selectedFolder,
         }),
       });
 
@@ -220,6 +280,31 @@ export function FileDetailPanel({ file, onClose, onUpdate, onDelete, onConvert }
                   }`}
                 />
               </button>
+            </div>
+
+            {/* Move to folder */}
+            <div className="flex items-end gap-2">
+              <div className="flex-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                  <span className="flex items-center gap-1.5">
+                    <FolderOpen className="h-3.5 w-3.5" />
+                    {t("moveToFolder")}
+                  </span>
+                </label>
+                <select
+                  value={selectedFolder ?? ""}
+                  onChange={(e) => setSelectedFolder(e.target.value === "" ? null : e.target.value)}
+                  className="w-full rounded border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 px-3 py-2 text-sm focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                >
+                  <option value="">{tCommon("noFolder")}</option>
+                  {folders.map((f) => (
+                    <option key={f.id} value={f.id}>{f.name}</option>
+                  ))}
+                </select>
+              </div>
+              <Button size="sm" onClick={handleMoveToFolder} isLoading={moving} icon={<FolderOpen className="h-4 w-4" />}>
+                {t("moveToFolder")}
+              </Button>
             </div>
           </div>
 

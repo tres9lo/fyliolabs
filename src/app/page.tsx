@@ -8,8 +8,6 @@ import { RecentFilesSection } from "@/components/dashboard/recent-files";
 import { RecentFoldersSection } from "@/components/dashboard/recent-folders";
 import { StorageDetail } from "@/components/dashboard/storage-detail";
 import { Footer } from "@/components/dashboard/footer";
-import { Sidebar } from "@/components/dashboard/sidebar";
-import { TopBar } from "@/components/dashboard/topbar";
 
 export const metadata = {
   title: "Dashboard - Fyliolabs",
@@ -41,82 +39,88 @@ export default async function HomePage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex">
-      <Sidebar />
-      <div className="flex-1 flex flex-col overflow-hidden">
-        <TopBar />
-        <main className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-7xl mx-auto">
-            {/* Welcome */}
-            <div className="mb-8">
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white">
-                {t("dashboard.welcome", { default: "Welcome back" })}
-              </h1>
-              <p className="mt-1 text-gray-600 dark:text-gray-400">
-                {t("dashboard.subtitle")}
-              </p>
-            </div>
-
-            {/* Stats cards */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-              <StatCard
-                label={t("dashboard.totalFiles")}
-                value={stats.totalFiles.toLocaleString()}
-                description={t("dashboard.filesDesc", { default: "All files uploaded" })}
-              />
-              <StatCard
-                label={t("dashboard.totalFolders")}
-                value={stats.totalFolders.toLocaleString()}
-                description={t("dashboard.foldersDesc", { default: "Nested folders created" })}
-              />
-              <StatCard
-                label={t("dashboard.storageUsed")}
-                value={stats.storageUsed}
-                description={t("dashboard.storageDesc", { default: "Across all files" })}
-              />
-            </div>
-
-            {/* Quick actions */}
-            <div className="mb-8">
-              <QuickActions />
-            </div>
-
-            {/* Recent files & folders — two-column grid */}
-            {user && (
-              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
-                <RecentFilesSection files={recentFiles} loading={false} />
-                <RecentFoldersSection folders={recentFolders} loading={false} />
-              </div>
-            )}
-
-            {/* Storage detail breakdown */}
-            {user && (
-              <div className="mb-8">
-                <StorageDetail
-                  breakdown={stats.fileTypeBreakdown}
-                  total={stats.fileTypeBreakdown.reduce((sum, e) => sum + e.bytes, 0)}
-                />
-              </div>
-            )}
-
-            {/* Footer */}
-            <Footer />
-          </div>
-        </main>
+    <div className="space-y-8">
+      {/* Welcome header */}
+      <div>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white font-display">
+          {t("dashboard.welcome")}
+        </h1>
+        <p className="mt-1.5 text-gray-600 dark:text-gray-400 text-sm">
+          {t("dashboard.subtitle")}
+        </p>
       </div>
+
+      {/* Stat cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <StatCard
+          label={t("dashboard.totalFiles")}
+          value={stats.totalFiles.toLocaleString()}
+          description={t("dashboard.filesDesc")}
+          accent="primary"
+        />
+        <StatCard
+          label={t("dashboard.totalFolders")}
+          value={stats.totalFolders.toLocaleString()}
+          description={t("dashboard.foldersDesc")}
+          accent="accent"
+        />
+        <StatCard
+          label={t("dashboard.storageUsed")}
+          value={stats.storageUsed}
+          description={t("dashboard.storageDesc")}
+          accent="primary"
+        />
+      </div>
+
+      {/* Quick actions */}
+      <div>
+        <QuickActions />
+      </div>
+
+      {/* Recent files & folders */}
+      {user && (
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <RecentFilesSection files={recentFiles} loading={false} />
+          <RecentFoldersSection folders={recentFolders} loading={false} />
+        </div>
+      )}
+
+      {/* Storage breakdown */}
+      {user && (
+        <div className="mb-2">
+          <StorageDetail
+            breakdown={stats.fileTypeBreakdown}
+            total={stats.fileTypeBreakdown.reduce((s, e) => s + e.bytes, 0)}
+          />
+        </div>
+      )}
+
+      <Footer />
     </div>
   );
 }
 
-// ─── helpers ──────────────────────────────────────────────────────
-
-function StatCard(props: { label: string; value: string; description: string }) {
-  const { label, value, description } = props;
+function StatCard({ label, value, description, accent }: { label: string; value: string; description: string; accent: "primary" | "accent" }) {
+  const accentGrad = accent === "primary"
+    ? "from-primary-500/12 to-primary-500/4"
+    : "from-accent-500/12 to-accent-500/4";
+  const accentBorder = accent === "primary"
+    ? "border-primary-500/30"
+    : "border-accent-500/30";
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm p-6">
-      <p className="text-sm font-medium text-gray-500 dark:text-gray-400">{label}</p>
-      <p className="mt-2 text-4xl font-bold text-gray-900 dark:text-white">{value}</p>
-      <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">{description}</p>
+    <div className={`
+      relative overflow-hidden rounded-2xl border bg-[var(--surface)]
+      border-[var(--border)] shadow-sm p-6 group
+      transition-shadow duration-200 hover:shadow-md
+      after:content-[''] after:absolute after:inset-0
+      after:bg-gradient-to-br ${accentGrad} after:opacity-100
+      after:pointer-events-none
+    `}>
+      <div className="relative z-10">
+        <p className="text-sm font-medium text-[var(--foreground)]/60">{label}</p>
+        <p className="mt-3 text-4xl font-bold text-[var(--foreground)]">{value}</p>
+        <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">{description}</p>
+      </div>
     </div>
   );
 }
