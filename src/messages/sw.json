@@ -113,7 +113,14 @@
     "viewOriginal": "Tazama asili",
     "convertFile": "Badilisha Faili",
     "conversion": "Ubadilishaji",
-    "public": "Hadhi"
+    "public": "Hadhi",
+    "save": "Hifadhi",
+    "cancel": "Ghairi",
+    "delete": "Futa",
+    "deleteConfirm": "Hii itafuta \"{name}\" na watoto wake kwa sasababu. Hatutakuwezesha kurejesha.",
+    "saving": "Inahifadhi...",
+    "error": "Hitilafu",
+    "success": "Mafanikio"
   },
   "toast": {
     "success": "Mafanikio",

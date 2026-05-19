@@ -116,7 +116,14 @@
     "viewOriginal": "Reba asanifu",
     "convertFile": "Hindura",
     "conversion": "Guhindura",
-    "public": "Mbuguzi"
+    "public": "Mbuguzi",
+    "save": "Bika",
+    "cancel": "Kureka",
+    "delete": "Siba",
+    "deleteConfirm": "Ibi bizosiba \"{name}\" n'ibyo birimo. Iki calculate si irements.",
+    "saving": "Bikorwa...",
+    "error": "Habaye ikosa",
+    "success": "Byagenze neza"
   },
   "toast": {
     "success": "Guhenda",

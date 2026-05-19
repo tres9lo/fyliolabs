@@ -90,7 +90,7 @@ export function FileDetailPanel({ file, onClose, onUpdate, onDelete, onConvert }
   };
 
   const handleDelete = async () => {
-    if (!confirm(t("common.deleteConfirm", { name: file.name }))) return;
+    if (!confirm(tCommon("deleteConfirm", { name: file.name }))) return;
     try {
       const res = await fetch(`/api/files/${file.id}`, { method: "DELETE" });
       const json = await res.json();
