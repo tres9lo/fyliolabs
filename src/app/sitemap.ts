@@ -1,7 +1,7 @@
 import { MetadataRoute } from "next";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://objective-dev.vercel.app";
+  const baseUrl = "https://fyliolabs.vercel.app";
 
   // Define primary pages to map dynamically
   const routes = [

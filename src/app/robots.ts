@@ -11,6 +11,6 @@ export default function robots(): MetadataRoute.Robots {
         "/static/",
       ],
     },
-    sitemap: "https://objective-dev.vercel.app/sitemap.xml",
+    sitemap: "https://fyliolabs.vercel.app/sitemap.ts",
   };
 }
