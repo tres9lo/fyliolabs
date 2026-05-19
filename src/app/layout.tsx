@@ -50,7 +50,8 @@ export default async function RootLayout({
               try {
                 var savedTheme = localStorage.getItem('theme');
                 var root = document.documentElement;
-                if (savedTheme === 'dark' || (!savedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                var isDark = savedTheme === 'dark' || ((!savedTheme || savedTheme === 'system') && window.matchMedia('(prefers-color-scheme: dark)').matches);
+                if (isDark) {
                   root.classList.add('dark');
                 } else {
                   root.classList.remove('dark');
