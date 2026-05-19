@@ -30,12 +30,12 @@
 }
 
 :root {
-  /* Minimalist light mode */
-  --background: #fdfdfd;
-  --foreground: #111111;
-  --surface: #ffffff;
-  --surface-muted: #f4f4f5;
-  --border: #e4e4e7;
+  /* Elite Slate/Off-white SaaS Light Mode */
+  --background: #f8fafc;    /* Soft warm slate-gray, extremely easy on the eyes */
+  --foreground: #0f172a;    /* Slate-900 for clean dark typography */
+  --surface: #ffffff;       /* Pure white for dashboard cards, creating premium depth */
+  --surface-muted: #f1f5f9;  /* Slate-100 for subtle sidebar and secondary highlights */
+  --border: #e2e8f0;        /* Slate-200 for thin sleek lines and boundaries */
   
   /* Unified sleek primary (Indigo/Slate) */
   --primary-50: #eff6ff;
