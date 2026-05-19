@@ -6,7 +6,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { formatFileSize } from "@/lib/utils";
 import { useTranslations } from "next-intl";
-import type { FileRecord, Folder } from "@/types";
+import type { FileRecord } from "@/types/file";
+import type { Folder } from "@/types/folder";
 import { toast } from "sonner";
 
 interface FolderOption { id: string; name: string; }
@@ -224,16 +225,40 @@ export function FileDetailPanel({ file, onClose, onUpdate, onDelete, onConvert }
         {/* Content */}
         <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* Preview */}
-          <div className="flex justify-center bg-gray-50 dark:bg-gray-900 rounded-lg p-6">
+          <div className="flex justify-center bg-[var(--surface-muted)] rounded-2xl p-6 border border-[var(--border)] overflow-hidden">
             {file.file_type === "image" ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={`${file.cloudinary_url}?w=400&h=400&crop=thumb`}
+                src={`${file.cloudinary_url}?w=800&h=800&crop=limit`}
                 alt={file.display_name}
-                className="max-h-48 max-w-full object-contain"
+                className="max-h-64 max-w-full object-contain rounded-lg shadow-sm"
               />
+            ) : file.file_type === "video" ? (
+              <video
+                src={file.cloudinary_url}
+                controls
+                className="max-h-64 max-w-full rounded-lg shadow-sm"
+                poster={file.cloudinary_url.replace(/\.[^/.]+$/, ".jpg")}
+              >
+                Your browser does not support the video tag.
+              </video>
+            ) : file.file_type === "audio" ? (
+              <div className="w-full flex flex-col items-center justify-center gap-6 py-4">
+                <div className="p-4 bg-pink-100 dark:bg-pink-900/30 rounded-full shadow-inner border border-pink-200 dark:border-pink-800">
+                  <Music className="h-12 w-12 text-pink-500 dark:text-pink-400" />
+                </div>
+                <audio
+                  src={file.cloudinary_url}
+                  controls
+                  className="w-full max-w-md rounded-full shadow-sm"
+                >
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
             ) : (
-              getFileIcon()
+              <div className="py-8">
+                {getFileIcon()}
+              </div>
             )}
           </div>
 
