@@ -14,7 +14,7 @@ export default function ContactPage() {
     message: "",
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.name || !formData.email || !formData.message) {
       toast.error("Please fill in all required fields.");
@@ -22,14 +22,30 @@ export default function ContactPage() {
     }
 
     setLoading(true);
-    // Simulate API request
-    setTimeout(() => {
-      setLoading(false);
-      toast.success("Message dispatched successfully!", {
-        description: "Trésor Biko will respond to your inquiry within 12 hours.",
+    try {
+      const response = await fetch("/api/contact", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
       });
-      setFormData({ name: "", email: "", subject: "", message: "" });
-    }, 1500);
+
+      const result = await response.json();
+
+      if (response.ok && result.success) {
+        toast.success("Message dispatched successfully!", {
+          description: "Trésor Biko will respond to your inquiry within 12 hours.",
+        });
+        setFormData({ name: "", email: "", subject: "", message: "" });
+      } else {
+        toast.error(result.error || "Failed to dispatch ticket. Please try again.");
+      }
+    } catch {
+      toast.error("Network interface error. Please check your connectivity.");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -194,7 +210,7 @@ export default function ContactPage() {
             >
               {loading ? (
                 <>
-                  <span className="h-4 w-4 border-2 border-white/20 border-t-white rounded-full animate-spin mr-1" />
+                  <span className="h-4.5 w-4.5 border-2 border-white/20 border-t-white rounded-full animate-spin mr-1" />
                   Routing Ticket...
                 </>
               ) : (
