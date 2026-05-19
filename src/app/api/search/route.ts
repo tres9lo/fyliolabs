@@ -29,13 +29,13 @@ export async function GET(request: NextRequest) {
     if (q) {
       query = query.textSearch("search_vector", q, {
         type: "websearch",
-        config: "english",
+        config: "simple",
       });
     }
 
     // Filter by tags (overlap)
     if (tags.length > 0) {
-      query = query.overlap("tags", tags);
+      query = query.overlaps("tags", tags);
     }
 
     // Sorting validation
@@ -51,10 +51,12 @@ export async function GET(request: NextRequest) {
     if (error) throw error;
 
     return NextResponse.json({ success: true, data: files });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(
-      { success: false, error: error.message || "Search failed" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
 }
+

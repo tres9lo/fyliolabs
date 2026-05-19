@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import LoginForm from "@/components/auth/login-form";
-import { getTranslator } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Sign in - Fyliolabs",
@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 };
 
 export default async function LoginPage() {
-  const t = await getTranslator();
+  const t = await getTranslations();
 
   return (
     <div className="flex flex-col gap-6">

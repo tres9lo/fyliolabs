@@ -9,8 +9,12 @@
     "upload": "Iyandika",
     "download": "Iyimura",
     "loading": "Kirimo...",
+    "success": "Byagenze neza",
+    "error": "Habaye ikosa",
     "settings": "Ibigaruriko",
     "dashboard": "Ibimenyetso",
+    "saveChanges": "Bika Amahindurwa",
+    "resetForm": "Kongera gushyiraho form",
     "files": "Ibisanduku",
     "folders": "Indango",
     "search": "Shaka",
@@ -22,7 +26,10 @@
     "deleteConfirm": "Ibi bizosiba \"{name}\" n'ibyo birimo. Iki calculate si irements.",
     "folderName": "Izina ry'indango",
     "description": "Umwinzure (ntibuzima)",
-    "createFolder": "Kora"
+    "createFolder": "Kora",
+    "name": "Izina",
+    "empty": "Kirimo ubusa",
+    "public": "Mbuguzi"
   },
   "auth": {
     "loginTitle": "Kanguka neza",
@@ -64,7 +71,9 @@
     "secure": "Koresha HTTPS kuri Cloudinary",
     "resetForm": "Kongera gushyiraho form",
     "saveChanges": "Bika Amahinduka",
-    "warning": "Ubusobanuro bwa Cloudinary buruhariwe, ntibushobora kugaragara."
+    "warning": "Ubusobanuro bwa Cloudinary buruhariwe, ntibushobora kugaragara.",
+    "language": "Ururimi",
+    "selectLanguage": "Hitamo ururimi rwawe"
   },
   "files": {
     "title": "Ibisanduku",

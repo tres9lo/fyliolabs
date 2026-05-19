@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { X, Save, Trash2, ExternalLink, Image as ImageIcon, Film, Music, FileText, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,44 +17,48 @@ interface FileDetailPanelProps {
 }
 
 export function FileDetailPanel({ file, onClose, onUpdate, onDelete, onConvert }: FileDetailPanelProps) {
-  if (!file) return null;
-
   const [isSaving, setIsSaving] = useState(false);
-  const [displayName, setDisplayName] = useState(file.display_name);
-  const [description, setDescription] = useState(file.description || "");
-  const [isPublic, setIsPublic] = useState(file.is_public);
+  const [displayName, setDisplayName] = useState(file?.display_name ?? "");
+  const [description, setDescription] = useState(file?.description || "");
+  const [isPublic, setIsPublic] = useState(file?.is_public ?? false);
   const [error, setError] = useState<string | null>(null);
   const [converting, setConverting] = useState(false);
   const [convertFormat, setConvertFormat] = useState("");
 
   const t = useTranslations("fileDetail");
   const tCommon = useTranslations("common");
-  const tFiles = useTranslations("files");
 
-  const conversionFormats: Record<string, string[]> = {
+  const conversionFormats = useMemo(() => ({
     image: ["jpg", "png", "webp", "avif", "gif"],
     video: ["mp4", "webm"],
     audio: ["mp3", "wav", "ogg"],
-  };
+  }), []);
 
-  const availableFormats = file.file_type ? conversionFormats[file.file_type] || [] : [];
+  const availableFormats = useMemo(() =>
+    file?.file_type && file.file_type in conversionFormats
+      ? conversionFormats[file.file_type as keyof typeof conversionFormats] || []
+      : [],
+    [file?.file_type, conversionFormats]
+  );
 
-  // Reset when file changes
   useEffect(() => {
-    setDisplayName(file.display_name);
-    setDescription(file.description || "");
-    setIsPublic(file.is_public);
-    setError(null);
-    setConverting(false);
-    // Set default convert format
-    if (availableFormats.length > 0) {
-      const currentExt = file.name.split('.').pop()?.toLowerCase() || "";
-      const defaultFormat = availableFormats.includes(currentExt) && currentExt !== file.cloudinary_format
-        ? currentExt
-        : availableFormats[0];
-      setConvertFormat(defaultFormat);
+    if (file) {
+      setDisplayName(file.display_name);
+      setDescription(file.description || "");
+      setIsPublic(file.is_public);
+      setError(null);
+      setConverting(false);
+      if (availableFormats.length > 0) {
+        const currentExt = file.name.split('.').pop()?.toLowerCase() || "";
+        const defaultFormat = availableFormats.includes(currentExt) && currentExt !== file.cloudinary_format
+          ? currentExt
+          : availableFormats[0];
+        setConvertFormat(defaultFormat);
+      }
     }
   }, [file, availableFormats]);
+
+  if (!file) return null;
 
   const handleSave = async () => {
     setIsSaving(true);
@@ -78,8 +82,8 @@ export function FileDetailPanel({ file, onClose, onUpdate, onDelete, onConvert }
       } else {
         setError(json.error || "Failed to save");
       }
-    } catch (err: any) {
-      setError(err.message || "Error saving");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Error saving");
     } finally {
       setIsSaving(false);
     }
@@ -96,8 +100,8 @@ export function FileDetailPanel({ file, onClose, onUpdate, onDelete, onConvert }
       } else {
         setError(json.error || "Delete failed");
       }
-    } catch (err: any) {
-      setError(err.message || "Delete error");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Delete error");
     }
   };
 
@@ -117,8 +121,8 @@ export function FileDetailPanel({ file, onClose, onUpdate, onDelete, onConvert }
       } else {
         setError(json.error || "Conversion failed");
       }
-    } catch (err: any) {
-      setError(err.message || "Conversion error");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Conversion error");
     } finally {
       setConverting(false);
     }

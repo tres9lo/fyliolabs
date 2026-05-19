@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { createServerClient } from "@supabase/ssr";
+import type { Profile } from "@/types/profile";
 
 export const createSupabaseServerClient = async () => {
   const cookieStore = await cookies();
@@ -26,14 +27,6 @@ export const createSupabaseServerClient = async () => {
   );
 };
 
-export async function getCurrentUser() {
-  const supabase = await createSupabaseServerClient();
-  const { data: { user }, error } = await supabase.auth.getUser();
-
-  if (error || !user) return null;
-  return user;
-}
-
 export async function getCurrentProfile() {
   const supabase = await createSupabaseServerClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -46,5 +39,5 @@ export async function getCurrentProfile() {
     .eq("id", user.id)
     .single();
 
-  return profile as any;
+  return profile as Profile;
 }

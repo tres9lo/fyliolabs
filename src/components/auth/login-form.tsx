@@ -40,14 +40,14 @@ export default function LoginForm() {
       const result = await response.json();
 
       if (response.ok && result.success) {
-        router.push("/dashboard");
+        router.push("/");
         router.refresh();
       } else {
         setError(result.error || "Login failed");
         setIsLoading(false);
       }
-    } catch (err: any) {
-      setError(err.message || "An error occurred");
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "An error occurred");
       setIsLoading(false);
     }
   };

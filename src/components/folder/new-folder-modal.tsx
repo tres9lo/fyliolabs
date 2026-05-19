@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
 import { folderCreateSchema } from "@/types/folder";
-import { FolderPlus, Loader2 } from "lucide-react";
+import { FolderPlus } from "lucide-react";
 import { useTranslations } from "next-intl";
+import type { FolderCreateInput } from "@/types/folder";
 
 interface NewFolderModalProps {
   isOpen: boolean;
@@ -33,7 +34,7 @@ export function NewFolderModal({
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm({
+  } = useForm<FolderCreateInput>({
     resolver: zodResolver(folderCreateSchema),
     defaultValues: { name: "", description: "", parent_id: parentId ?? null },
   });
@@ -41,17 +42,18 @@ export function NewFolderModal({
   useEffect(() => {
     if (isOpen) {
       reset({ name: "", description: "", parent_id: parentId ?? null });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       setError(null);
     }
   }, [isOpen, reset, parentId]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: FolderCreateInput) => {
     setIsLoading(true);
     setError(null);
     try {
       await onCreate(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Failed to create folder");
     } finally {
       setIsLoading(false);
     }

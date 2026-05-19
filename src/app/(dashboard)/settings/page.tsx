@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { getTranslator } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 import ProfileSettingsForm from "@/components/settings/profile-settings-form";
+import { LanguageSettings } from "@/components/settings/language-settings";
 
 export const metadata: Metadata = {
   title: "Settings - Fyliolabs",
@@ -8,7 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function SettingsPage() {
-  const t = await getTranslator();
+  const t = await getTranslations();
 
   return (
     <div className="space-y-6">
@@ -21,7 +22,8 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <div className="max-w-2xl">
+      <div className="max-w-2xl space-y-6">
+        <LanguageSettings />
         <ProfileSettingsForm />
       </div>
     </div>

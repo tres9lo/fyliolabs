@@ -1,9 +1,8 @@
-import { getCurrentUser } from "./server-supabase";
-import type { SupabaseClient } from "@supabase/supabase-js";
+import { createSupabaseServerClient } from "./server-supabase";
 import type { Profile } from "@/types/profile";
 
-export async function getServerProfile() {
-  return await getCurrentProfile();
+export async function getServerProfile(): Promise<Profile | null> {
+  return getCurrentProfile();
 }
 
 export async function getCurrentProfile(): Promise<Profile | null> {
@@ -22,7 +21,7 @@ export async function getCurrentProfile(): Promise<Profile | null> {
 }
 
 export async function updateProfile(
-  data: any
+  data: Record<string, unknown>
 ): Promise<{ success: boolean; error?: string; profile?: Profile }> {
   try {
     const supabase = await createSupabaseServerClient();
@@ -47,7 +46,9 @@ export async function updateProfile(
     }
 
     return { success: true, profile: updated as Profile };
-  } catch (error: any) {
-    return { success: false, error: error.message || "Update failed" };
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
+    return { success: false, error: message };
   }
 }
+

@@ -35,10 +35,12 @@ export async function GET(request: NextRequest) {
     if (error) throw error;
 
     return NextResponse.json({ success: true, data: files });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to fetch files" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
 }
+

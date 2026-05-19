@@ -1,6 +1,6 @@
 import { getFolderTree } from "@/lib/folder-service";
 import { FolderManager } from "@/components/folder/folder-manager";
-import { getTranslator } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 export const metadata = {
   title: "Folders - Fyliolabs",
@@ -9,7 +9,7 @@ export const metadata = {
 
 export default async function FoldersPage() {
   const initialFolders = await getFolderTree();
-  const t = await getTranslator();
+  const t = await getTranslations();
 
   return (
     <div className="space-y-6">

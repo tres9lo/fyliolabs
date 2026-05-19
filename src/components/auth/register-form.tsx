@@ -40,7 +40,7 @@ export default function RegisterForm() {
       const result = await response.json();
 
       if (response.ok && result.success) {
-        router.push("/dashboard");
+        router.push("/");
         router.refresh();
       } else {
         setError(result.error || "Registration failed");

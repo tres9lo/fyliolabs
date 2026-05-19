@@ -30,8 +30,10 @@ export function SupabaseProvider({
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    // Initial session already set, no need to fetch
-    setLoading(false);
+    // If there's an initial session, make sure Supabase client knows
+    if (initialSession) {
+      supabase.auth.setSession(initialSession);
+    }
 
     const {
       data: { subscription },
@@ -40,11 +42,6 @@ export function SupabaseProvider({
       setUser(session?.user ?? null);
       setLoading(false);
     });
-
-    // If there's an initial session, make sure Supabase client knows
-    if (initialSession) {
-      supabase.auth.setSession(initialSession);
-    }
 
     return () => subscription.unsubscribe();
   }, [initialSession]);

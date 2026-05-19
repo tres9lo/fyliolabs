@@ -52,10 +52,12 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(
-      { success: false, error: error.message || "Upload failed" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
 }
+

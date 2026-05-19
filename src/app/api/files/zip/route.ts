@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseClientForAPI } from "@/lib/supabase-api";
 import AdmZip from "adm-zip";
-import { createClient } from "@supabase/supabase-js";
 
 export async function POST(request: NextRequest) {
   try {
@@ -69,7 +68,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Initialize Cloudinary for fetching original files
-    const cloudinary = require("cloudinary");
+    const cloudinary = (await import("cloudinary")).v2;
     cloudinary.config({
       cloud_name: cloudinary_cloud_name,
       api_key: cloudinary_api_key,
@@ -80,37 +79,41 @@ export async function POST(request: NextRequest) {
     const zip = new AdmZip();
 
     // Download each file and add to zip
-    for (const file of files as any[]) {
+    for (const f of files as Array<{ id: string; name: string; cloudinary_url: string }>) {
       try {
         // Fetch file from Cloudinary URL
-        const response = await fetch(file.cloudinary_url);
+        const response = await fetch(f.cloudinary_url);
         if (!response.ok) {
-          console.warn(`Failed to fetch ${file.name}: ${response.statusText}`);
+          console.warn(`Failed to fetch ${f.name}: ${response.statusText}`);
           continue;
         }
         const buffer = await response.arrayBuffer();
         const nodeBuffer = Buffer.from(buffer);
         // Add to zip with original filename
-        zip.addFile(file.name, nodeBuffer);
-      } catch (err: any) {
-        console.error(`Error adding ${file.name} to zip:`, err);
+        zip.addFile(f.name, nodeBuffer);
+      } catch (err: unknown) {
+        console.error(`Error adding ${f.name} to zip:`, err);
         continue;
       }
     }
 
-    const zipBuffer = zip.toBuffer();
+    const zipBytes = Buffer.from(zip.toBuffer());
 
-    return new NextResponse(zipBuffer, {
+    const response = new NextResponse(new Uint8Array(zipBytes.buffer, zipBytes.byteOffset, zipBytes.byteLength), {
       status: 200,
       headers: {
         "Content-Type": "application/zip",
         "Content-Disposition": `attachment; filename="fyliolabs_${user.id}_${Date.now()}.zip"`,
       },
     });
-  } catch (error: any) {
+
+    return response;
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(
-      { success: false, error: error.message || "ZIP creation failed" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
 }
+

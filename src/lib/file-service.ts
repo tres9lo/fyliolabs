@@ -1,8 +1,16 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { v2 as cloudinary } from "cloudinary";
-import type { FileRecord } from "@/types/file";
+import type { FileRecord, FileType } from "@/types/file";
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
+
+interface CloudinaryUploadResult {
+  secure_url: string;
+  public_id: string;
+  format: string;
+  width?: number;
+  height?: number;
+}
 
 export async function uploadFile(
   supabase: SupabaseClient,
@@ -44,7 +52,8 @@ export async function uploadFile(
     });
 
     // Upload to Cloudinary
-    const uploadResult = await new Promise<cloudinary.UploadApiResponse>((resolve, reject) => {
+    const buffer = Buffer.from(await file.arrayBuffer());
+    const uploadResult = await new Promise<CloudinaryUploadResult>((resolve, reject) => {
       const stream = cloudinary.uploader.upload_stream(
         {
           folder: "fyliolabs",
@@ -54,16 +63,15 @@ export async function uploadFile(
         },
         (error, result) => {
           if (error) reject(error);
-          else resolve(result);
+          else resolve(result as CloudinaryUploadResult);
         }
       );
       // Write file buffer
-      const buffer = Buffer.from(await file.arrayBuffer());
       stream.end(buffer);
     });
 
     // Build insert object
-    const insertData: any = {
+    const insertData = {
       name: file.name,
       display_name: file.name,
       description: null,
@@ -99,8 +107,9 @@ export async function uploadFile(
     }
 
     return { success: true, file: newFile };
-  } catch (error: any) {
-    return { success: false, error: error.message || "Upload failed" };
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
+    return { success: false, error: message };
   }
 }
 
@@ -119,3 +128,4 @@ export function detectFileType(mime: string): FileType {
   }
   return "other";
 }
+

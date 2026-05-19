@@ -9,8 +9,12 @@
     "upload": "Télécharger",
     "download": "Télécharger",
     "loading": "Chargement...",
+    "success": "Succès",
+    "error": "Erreur",
     "settings": "Paramètres",
     "dashboard": "Tableau de bord",
+    "saveChanges": "Enregistrer les modifications",
+    "resetForm": "Réinitialiser le formulaire",
     "files": "Fichiers",
     "folders": "Dossiers",
     "search": "Rechercher",
@@ -22,7 +26,10 @@
     "deleteConfirm": "Ceci supprimera définitivement \"{name}\" et tous ses enfants. Cette action est irréversible.",
     "folderName": "Nom du dossier",
     "description": "Description (optionnel)",
-    "createFolder": "Créer"
+    "createFolder": "Créer",
+    "name": "Nom",
+    "empty": "Vide",
+    "public": "Public"
   },
   "auth": {
     "loginTitle": "Bon retour",
@@ -39,11 +46,18 @@
     "fullName": "Nom complet"
   },
   "dashboard": {
+    "welcome": "Bon retour",
     "title": "Tableau de bord",
     "subtitle": "Gérez vos fichiers et dossiers",
     "totalFiles": "Total des fichiers",
     "totalFolders": "Total des dossiers",
     "storageUsed": "Espace utilisé",
+    "filesDesc": "Tous les fichiers téléchargés",
+    "foldersDesc": "Dossiers imbriqués créés",
+    "storageDesc": "Sur l'ensemble des fichiers",
+    "uploadToSee": "Téléchargez des fichiers pour voir votre espace",
+    "signInToSee": "Connectez-vous pour continuer",
+    "signInDesc": "Commencez avec Fyliolabs",
     "quickStart": "Démarrage rapide",
     "getStarted": "Commencez avec Fyliolabs",
     "step1": "1. Configurer Cloudinary",
@@ -51,7 +65,21 @@
     "step2": "2. Créer votre premier dossier",
     "step2Desc": "Organisez vos fichiers en créant des dossiers.",
     "step3": "3. Télécharger des fichiers",
-    "step3Desc": "Glissez-déposez des fichiers pour les télécharger sur Cloudinary."
+    "step3Desc": "Glissez-déposez des fichiers pour les télécharger sur Cloudinary.",
+    "quickActions": "Actions rapides",
+    "upload": "Télécharger un fichier",
+    "createFolder": "Créer un dossier",
+    "browseFiles": "Parcourir les fichiers",
+    "settings": "Paramètres",
+    "recentFiles": "Fichiers récents",
+    "recentFolders": "Dossiers récents",
+    "viewAll": "Voir tout",
+    "noFilesYet": "Aucun fichier téléchargé",
+    "noFoldersYet": "Aucun dossier. Créez votre premier dossier pour organiser vos fichiers.",
+    "public": "Public",
+    "createdPrefix": "Créé",
+    "storageBreakdown": "Répartition du stockage",
+    "noStorageData": "Aucune donnée"
   },
   "settings": {
     "title": "Paramètres",
@@ -67,7 +95,9 @@
     "secure": "Utiliser HTTPS pour les URLs Cloudinary",
     "resetForm": "Réinitialiser le formulaire",
     "saveChanges": "Enregistrer les modifications",
-    "warning": "Vos identifiants Cloudinary sont stockés de manière sécurisée, jamais exposés au navigateur."
+    "warning": "Vos identifiants Cloudinary sont stockés de manière sécurisée, jamais exposés au navigateur.",
+    "language": "Langue",
+    "selectLanguage": "Sélectionnez votre langue préférée"
   },
   "files": {
     "title": "Fichiers",
@@ -110,7 +140,14 @@
     "viewOriginal": "Voir l'original",
     "convertFile": "Convertir le fichier",
     "conversion": "Conversion",
-    "public": "Public"
+    "public": "Public",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "deleteConfirm": "Ceci supprimera définitivement \"{name}\". Cette action est irréversible.",
+    "saving": "Enregistrement...",
+    "error": "Erreur",
+    "success": "Succès"
   },
   "toast": {
     "success": "Succès",

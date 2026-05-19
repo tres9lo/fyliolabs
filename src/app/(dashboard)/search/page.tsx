@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
+import Card from "@/components/ui/card";
+import Input from "@/components/ui/input";
+import  Button  from "@/components/ui/button";
 import { FileList } from "@/components/file/file-list";
 import { FileDetailPanel } from "@/components/file/file-detail-panel";
 import { Search, RotateCcw } from "lucide-react";

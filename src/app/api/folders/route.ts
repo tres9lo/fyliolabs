@@ -24,9 +24,10 @@ export async function GET(request: NextRequest) {
       const folders = await getFolders();
       return NextResponse.json({ success: true, data: folders });
     }
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to fetch folders" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
@@ -73,13 +74,14 @@ export async function POST(request: NextRequest) {
     }
 
     // Check duplicate name in same parent level
-    const { data: duplicate, error: dupError } = await supabase
+    const dupQuery = supabase
       .from("folders")
       .select("id")
       .eq("user_id", user.id)
-      .eq("name", name)
-      .eq("parent_id", parent_id ?? "")
-      .maybeSingle();
+      .eq("name", name);
+    const { data: duplicate, error: dupError } = parent_id
+      ? await dupQuery.eq("parent_id", parent_id).maybeSingle()
+      : await dupQuery.is("parent_id", null).maybeSingle();
 
     if (duplicate) {
       return NextResponse.json(
@@ -107,10 +109,12 @@ export async function POST(request: NextRequest) {
     }
 
     return NextResponse.json({ success: true, data: folder });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to create folder" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
 }
+

@@ -33,9 +33,10 @@ export async function GET(request: NextRequest) {
     };
 
     return NextResponse.json({ success: true, data: safeProfile });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to fetch profile" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
@@ -67,7 +68,7 @@ export async function PUT(request: NextRequest) {
 
     const updateData = Object.keys(body)
       .filter((key) => allowed.includes(key))
-      .reduce((acc: any, key) => {
+      .reduce<Record<string, unknown>>((acc, key) => {
         // Don't update with empty strings for sensitive fields
         if (
           body[key] === "" &&
@@ -107,10 +108,12 @@ export async function PUT(request: NextRequest) {
     };
 
     return NextResponse.json({ success: true, data: responseData });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(
-      { success: false, error: error.message || "Update failed" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
 }
+

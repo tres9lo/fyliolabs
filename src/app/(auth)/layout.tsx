@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Logo from "@/components/ui/logo";
-import { getTranslator } from "next-intl/server";
+import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Authentication - Fyliolabs",
@@ -12,7 +12,7 @@ export default async function AuthLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  const t = await getTranslator();
+  const t = await getTranslations();
   const year = new Date().getFullYear();
 
   return (

@@ -25,3 +25,4 @@ const FormField = forwardRef<HTMLDivElement, FormFieldProps>(
 FormField.displayName = "FormField";
 
 export default FormField;
+export { FormField };

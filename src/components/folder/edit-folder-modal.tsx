@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormField } from "@/components/ui/form-field";
 import { folderUpdateSchema } from "@/types/folder";
-import { Pencil, Loader2 } from "lucide-react";
+import { Pencil } from "lucide-react";
 import { useTranslations } from "next-intl";
 import type { Folder } from "@/types/folder";
 
@@ -48,17 +48,19 @@ export function EditFolderModal({
         name: folder.name,
         description: folder.description || "",
       });
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       setError(null);
     }
   }, [isOpen, folder, reset]);
 
-  const onSubmit = async (data: { name: string; description: string }) => {
+  const onSubmit = async (data: unknown) => {
     setIsLoading(true);
     setError(null);
     try {
-      await onUpdate(folder.id, data);
-    } catch (err: any) {
-      setError(err.message);
+      const { name: rawName, description } = data as { name: string; description?: string | null };
+      await onUpdate(folder.id, { name: rawName.trim(), description: description ?? folder.description });
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : "Update failed");
     } finally {
       setIsLoading(false);
     }

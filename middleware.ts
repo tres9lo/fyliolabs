@@ -1,13 +1,8 @@
-import createMiddleware from "next-intl/middleware";
 import { NextRequest, NextResponse } from "next/server";
 import { createServerClient } from "@supabase/ssr";
-import { i18n } from "@/i18n";
-
-const intlMiddleware = createMiddleware(i18n);
 
 export async function middleware(request: NextRequest) {
-  // Run internationalization middleware first
-  const response = intlMiddleware(request);
+  const response = NextResponse.next();
 
   // Authentication & Authorization
   const supabase = createServerClient(
@@ -28,25 +23,26 @@ export async function middleware(request: NextRequest) {
   );
 
   const { data: { user } } = await supabase.auth.getUser();
-  const { pathname } = request.nextUrl;
+  const pathname = request.nextUrl.pathname;
 
-  // Protect dashboard and related routes
-  const protectedPaths = ["/dashboard", "/settings", "/files", "/folders", "/search"];
-  if (protectedPaths.some((p) => pathname.startsWith(p))) {
-    if (!user) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/login";
-      return NextResponse.redirect(url);
-    }
+  // Protect dashboard routes
+  const protectedPaths = ["/", "/settings", "/files", "/folders", "/search"];
+  const isProtected = protectedPaths.some((p) => pathname === p || pathname.startsWith(p + "/"));
+
+  if (isProtected && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
   }
 
   // Redirect authenticated users away from auth pages
-  if (pathname.startsWith("/login") || pathname.startsWith("/register")) {
-    if (user) {
-      const url = request.nextUrl.clone();
-      url.pathname = "/dashboard";
-      return NextResponse.redirect(url);
-    }
+  const authPaths = ["/login", "/register"];
+  const isAuthPath = authPaths.some((p) => pathname === p || pathname.startsWith(p + "/"));
+
+  if (isAuthPath && user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/";
+    return NextResponse.redirect(url);
   }
 
   return response;
@@ -54,7 +50,6 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    // Match all request paths except for static files and API routes (next-intl will handle locale)
     "/((?!api|_next|_vercel|.*\\..*).*)",
   ],
 };

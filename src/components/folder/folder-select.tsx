@@ -20,7 +20,7 @@ export function FolderSelect({
   const t = useTranslations();
 
   useEffect(() => {
-    const fetch = async () => {
+    const loadFolders = async () => {
       try {
         const res = await fetch("/api/folders");
         const json = await res.json();
@@ -33,7 +33,7 @@ export function FolderSelect({
         setLoading(false);
       }
     };
-    fetch();
+    loadFolders();
   }, []);
 
   return (

@@ -1,0 +1,53 @@
+﻿src/app/(auth)/layout.tsx(3,10): error TS2724: '"next-intl/server"' has no exported member named 'getTranslator'. Did you mean 'getTranslations'?
+src/app/api/files/[id]/convert/route.ts(102,58): error TS2694: Namespace '"cloudinary".v2' has no exported member 'UploadApiResponse'.
+src/app/api/files/[id]/convert/route.ts(107,45): error TS2339: Property 'guess_resource_type' does not exist on type 'typeof utils'.
+src/app/api/files/zip/route.ts(3,20): error TS2307: Cannot find module 'adm-zip' or its corresponding type declarations.
+src/app/api/search/route.ts(38,21): error TS2551: Property 'overlap' does not exist on type 'PostgrestFilterBuilder<any, any, any, any[], "files", unknown, "GET">'. Did you mean 'overlaps'?
+src/app/files/page.tsx(124,19): error TS2322: Type '{ children: string; size: string; variant: "secondary"; onClick: () => void; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'size' does not exist on type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+src/app/files/page.tsx(127,19): error TS2322: Type '{ children: string[]; size: string; onClick: () => Promise<void>; icon: Element; }' is not assignable to type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+  Property 'size' does not exist on type 'IntrinsicAttributes & ButtonProps & RefAttributes<HTMLButtonElement>'.
+src/app/settings/page.tsx(2,10): error TS2724: '"next-intl/server"' has no exported member named 'getTranslator'. Did you mean 'getTranslations'?
+src/app/settings/page.tsx(3,8): error TS2613: Module '"C:/Users/Mr. Tresor/Downloads/New Projects/Projects/Objective-Dev/Priority/Working/fyliolabs/src/components/settings/profile-settings-form"' has no default export. Did you mean to use 'import { ProfileSettingsForm } from "C:/Users/Mr. Tresor/Downloads/New Projects/Projects/Objective-Dev/Priority/Working/fyliolabs/src/components/settings/profile-settings-form"' instead?
+src/components/file/file-detail-panel.tsx(5,10): error TS2614: Module '"@/components/ui/button"' has no exported member 'Button'. Did you mean to use 'import Button from "@/components/ui/button"' instead?
+src/components/file/file-detail-panel.tsx(6,10): error TS2614: Module '"@/components/ui/input"' has no exported member 'Input'. Did you mean to use 'import Input from "@/components/ui/input"' instead?
+src/components/file/file-detail-panel.tsx(184,28): error TS7006: Parameter 'e' implicitly has an 'any' type.
+src/components/file/upload-zone.tsx(7,10): error TS2614: Module '"@/components/ui/button"' has no exported member 'Button'. Did you mean to use 'import Button from "@/components/ui/button"' instead?
+src/components/file/upload-zone.tsx(8,10): error TS2614: Module '"@/components/ui/card"' has no exported member 'Card'. Did you mean to use 'import Card from "@/components/ui/card"' instead?
+src/components/folder/delete-folder-modal.tsx(5,10): error TS2614: Module '"@/components/ui/button"' has no exported member 'Button'. Did you mean to use 'import Button from "@/components/ui/button"' instead?
+src/components/folder/edit-folder-modal.tsx(7,10): error TS2614: Module '"@/components/ui/button"' has no exported member 'Button'. Did you mean to use 'import Button from "@/components/ui/button"' instead?
+src/components/folder/edit-folder-modal.tsx(8,10): error TS2614: Module '"@/components/ui/input"' has no exported member 'Input'. Did you mean to use 'import Input from "@/components/ui/input"' instead?
+src/components/folder/edit-folder-modal.tsx(9,10): error TS2614: Module '"@/components/ui/form-field"' has no exported member 'FormField'. Did you mean to use 'import FormField from "@/components/ui/form-field"' instead?
+src/components/folder/edit-folder-modal.tsx(69,36): error TS2345: Argument of type '(data: { name: string; description: string; }) => Promise<void>' is not assignable to parameter of type 'SubmitHandler<{ name?: string | undefined; description?: string | null | undefined; parent_id?: string | null | undefined; }>'.
+  Types of parameters 'data' and 'data' are incompatible.
+    Type '{ name?: string | undefined; description?: string | null | undefined; parent_id?: string | null | undefined; }' is not assignable to type '{ name: string; description: string; }'.
+      Types of property 'name' are incompatible.
+        Type 'string | undefined' is not assignable to type 'string'.
+          Type 'undefined' is not assignable to type 'string'.
+src/components/folder/folder-manager.tsx(8,10): error TS2614: Module '"@/components/ui/button"' has no exported member 'Button'. Did you mean to use 'import Button from "@/components/ui/button"' instead?
+src/components/folder/folder-manager.tsx(9,10): error TS2614: Module '"@/components/ui/card"' has no exported member 'Card'. Did you mean to use 'import Card from "@/components/ui/card"' instead?
+src/components/folder/folder-select.tsx(25,33): error TS2554: Expected 0 arguments, but got 1.
+src/components/folder/folder-select.tsx(26,32): error TS2339: Property 'json' does not exist on type 'void'.
+src/components/folder/folder-tree.tsx(6,3): error TS2300: Duplicate identifier 'Folder'.
+src/components/folder/folder-tree.tsx(12,15): error TS2300: Duplicate identifier 'Folder'.
+src/components/folder/folder-tree.tsx(15,12): error TS2749: 'Folder' refers to a value, but is being used as a type here. Did you mean 'typeof Folder'?
+src/components/folder/folder-tree.tsx(16,22): error TS2749: 'Folder' refers to a value, but is being used as a type here. Did you mean 'typeof Folder'?
+src/components/folder/folder-tree.tsx(17,22): error TS2749: 'Folder' refers to a value, but is being used as a type here. Did you mean 'typeof Folder'?
+src/components/folder/folder-tree.tsx(46,11): error TS2749: 'Folder' refers to a value, but is being used as a type here. Did you mean 'typeof Folder'?
+src/components/folder/folder-tree.tsx(46,33): error TS2749: 'Folder' refers to a value, but is being used as a type here. Did you mean 'typeof Folder'?
+src/components/folder/folder-tree.tsx(47,22): error TS2749: 'Folder' refers to a value, but is being used as a type here. Did you mean 'typeof Folder'?
+src/components/folder/folder-tree.tsx(48,22): error TS2749: 'Folder' refers to a value, but is being used as a type here. Did you mean 'typeof Folder'?
+src/components/folder/folder-tree.tsx(107,34): error TS7006: Parameter 'child' implicitly has an 'any' type.
+src/components/folder/new-folder-modal.tsx(7,10): error TS2614: Module '"@/components/ui/button"' has no exported member 'Button'. Did you mean to use 'import Button from "@/components/ui/button"' instead?
+src/components/folder/new-folder-modal.tsx(8,10): error TS2614: Module '"@/components/ui/input"' has no exported member 'Input'. Did you mean to use 'import Input from "@/components/ui/input"' instead?
+src/components/folder/new-folder-modal.tsx(9,10): error TS2614: Module '"@/components/ui/form-field"' has no exported member 'FormField'. Did you mean to use 'import FormField from "@/components/ui/form-field"' instead?
+src/components/settings/profile-settings-form.tsx(6,10): error TS2614: Module '"@/components/ui/button"' has no exported member 'Button'. Did you mean to use 'import Button from "@/components/ui/button"' instead?
+src/components/settings/profile-settings-form.tsx(7,10): error TS2614: Module '"@/components/ui/input"' has no exported member 'Input'. Did you mean to use 'import Input from "@/components/ui/input"' instead?
+src/components/settings/profile-settings-form.tsx(8,10): error TS2614: Module '"@/components/ui/card"' has no exported member 'Card'. Did you mean to use 'import Card from "@/components/ui/card"' instead?
+src/components/settings/profile-settings-form.tsx(9,10): error TS2614: Module '"@/components/ui/form-field"' has no exported member 'FormField'. Did you mean to use 'import FormField from "@/components/ui/form-field"' instead?
+src/i18n.ts(1,25): error TS2305: Module '"next-intl/routing"' has no exported member 'getRequestConfig'.
+src/i18n.ts(15,52): error TS7031: Binding element 'locale' implicitly has an 'any' type.
+src/lib/file-service.ts(47,55): error TS2694: Namespace '"cloudinary".v2' has no exported member 'UploadApiResponse'.
+src/lib/file-service.ts(61,34): error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+src/lib/folder-service.ts(289,30): error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.
+src/lib/folder-service.ts(297,9): error TS1308: 'await' expressions are only allowed within async functions and at the top levels of modules.

@@ -34,9 +34,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     return NextResponse.json({ success: true, data: file });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to fetch file" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
@@ -59,7 +60,7 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
 
     // Allowed updatable fields
     const allowed = ["display_name", "description", "is_public", "tags"];
-    const updates: any = { updated_at: new Date().toISOString() };
+    const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
 
     allowed.forEach((key) => {
       if (body[key] !== undefined) {
@@ -83,9 +84,10 @@ export async function PUT(request: NextRequest, { params }: RouteParams) {
     }
 
     return NextResponse.json({ success: true, data: updated });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to update file" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
@@ -123,7 +125,7 @@ export async function DELETE(
     }
 
     // Delete from Cloudinary
-    const { data: profile, error: profileError } = await supabase
+    const { data: profile } = await supabase
       .from("profiles")
       .select("cloudinary_cloud_name, cloudinary_api_key, cloudinary_api_secret, cloudinary_secure")
       .eq("id", user.id)
@@ -160,9 +162,10 @@ export async function DELETE(
     }
 
     return NextResponse.json({ success: true, data: { deletedId: id } });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to delete file" },
+      { success: false, error: message },
       { status: 500 }
     );
   }

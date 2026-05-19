@@ -11,8 +11,12 @@
     "upload": "Upload",
     "download": "Download",
     "loading": "Loading...",
+    "success": "Success",
+    "error": "Error",
     "settings": "Settings",
     "dashboard": "Dashboard",
+    "saveChanges": "Save Changes",
+    "resetForm": "Reset Form",
     "files": "Files",
     "folders": "Folders",
     "search": "Search",
@@ -26,6 +30,7 @@
     "description": "Description (optional)",
     "createFolder": "Create",
     "name": "Name",
+    "empty": "Empty",
     "public": "Public"
   },
   "auth": {
@@ -43,11 +48,18 @@
     "fullName": "Full Name"
   },
   "dashboard": {
+    "welcome": "Welcome back",
     "title": "Dashboard",
     "subtitle": "Manage your files and folders",
     "totalFiles": "Total Files",
     "totalFolders": "Total Folders",
     "storageUsed": "Storage Used",
+    "filesDesc": "All files uploaded",
+    "foldersDesc": "Nested folders created",
+    "storageDesc": "Across all files",
+    "uploadToSee": "Upload files to see your storage",
+    "signInToSee": "Sign in to continue",
+    "signInDesc": "Get started with Fyliolabs",
     "quickStart": "Quick Start",
     "getStarted": "Get started with Fyliolabs",
     "step1": "1. Configure Cloudinary",
@@ -55,7 +67,21 @@
     "step2": "2. Create Your First Folder",
     "step2Desc": "Organize your files by creating folders.",
     "step3": "3. Upload Files",
-    "step3Desc": "Drag and drop files to upload them to Cloudinary."
+    "step3Desc": "Drag and drop files to upload them to Cloudinary.",
+    "quickActions": "Quick Actions",
+    "upload": "Upload File",
+    "createFolder": "Create Folder",
+    "browseFiles": "Browse Files",
+    "settings": "Settings",
+    "recentFiles": "Recent Files",
+    "recentFolders": "Recent Folders",
+    "viewAll": "View all",
+    "noFilesYet": "No files uploaded yet",
+    "noFoldersYet": "No folders yet. Create your first folder to organize your files.",
+    "public": "Public",
+    "createdPrefix": "Created",
+    "storageBreakdown": "Storage Breakdown",
+    "noStorageData": "No data yet"
   },
   "settings": {
     "title": "Settings",
@@ -71,7 +97,9 @@
     "secure": "Use HTTPS for Cloudinary URLs",
     "resetForm": "Reset Form",
     "saveChanges": "Save Changes",
-    "warning": "Your Cloudinary credentials are stored securely, never exposed to the browser."
+    "warning": "Your Cloudinary credentials are stored securely, never exposed to the browser.",
+    "language": "Language",
+    "selectLanguage": "Select your preferred language"
   },
   "files": {
     "title": "Files",
@@ -114,7 +142,14 @@
     "viewOriginal": "View original",
     "convertFile": "Convert File",
     "conversion": "Conversion",
-    "public": "Public"
+    "public": "Public",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleteConfirm": "This will permanently delete \"{name}\". This action cannot be undone.",
+    "saving": "Saving...",
+    "error": "Error",
+    "success": "Success"
   },
   "toast": {
     "success": "Success",

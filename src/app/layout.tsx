@@ -29,7 +29,6 @@ export default async function RootLayout({
 }>) {
   const supabase = await createSupabaseServerClient();
   const { data: { session } } = await supabase.auth.getSession();
-
   const messages = await getMessages();
 
   return (

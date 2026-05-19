@@ -4,16 +4,14 @@ import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import { Upload, Loader2 } from "lucide-react";
 import { useTranslations } from "next-intl";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
 import { useToast } from "@/components/providers/toast-provider";
 
 const MAX_SIZE = 100 * 1024 * 1024; // 100MB
 
-export function UploadZone({ onUploadSuccess }: { onUploadSuccess?: (file: any) => void }) {
+export function UploadZone({ onUploadSuccess, selectedFolder }: { onUploadSuccess?: (file: File) => void; selectedFolder?: string | null }) {
   const [isLoading, setIsLoading] = useState(false);
   const { addToast } = useToast();
-  const t = useTranslations("files");
+  const t = useTranslations();
 
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
@@ -25,6 +23,9 @@ export function UploadZone({ onUploadSuccess }: { onUploadSuccess?: (file: any) 
       try {
         const formData = new FormData();
         formData.append("file", file);
+        if (selectedFolder) {
+          formData.append("folder_id", selectedFolder);
+        }
 
         const response = await fetch("/api/files/upload", {
           method: "POST",
@@ -47,17 +48,17 @@ export function UploadZone({ onUploadSuccess }: { onUploadSuccess?: (file: any) 
             variant: "destructive",
           });
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         addToast({
           title: t("toast.error"),
-          description: err.message || "Upload error",
+          description: err instanceof Error ? err.message : "Upload error",
           variant: "destructive",
         });
       } finally {
         setIsLoading(false);
       }
     },
-    [addToast, onUploadSuccess, t]
+    [addToast, onUploadSuccess, selectedFolder, t]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

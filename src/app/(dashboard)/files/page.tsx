@@ -1,14 +1,13 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { UploadZone } from "@/components/file/upload-zone";
 import { FileList } from "@/components/file/file-list";
-import { Card } from "@/components/ui/card";
+import Card from "@/components/ui/card";
 import { FolderSelect } from "@/components/folder/folder-select";
 import { FileDetailPanel } from "@/components/file/file-detail-panel";
-import { Button } from "@/components/ui/button";
+import Button from "@/components/ui/button";
 import { Download } from "lucide-react";
-import { useToast } from "@/components/providers/toast-provider";
 import { useTranslations } from "next-intl";
 import type { FileRecord } from "@/types/file";
 
@@ -20,22 +19,25 @@ export default function FilesPage() {
   const [selectedFile, setSelectedFile] = useState<FileRecord | null>(null);
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
 
-  const fetchFiles = async () => {
+  const loadFiles = useCallback(async () => {
+    setLoading(true);
     try {
       const params = selectedFolder ? `?folder_id=${selectedFolder}` : "?all=true";
       const res = await fetch(`/api/files${params}`);
       const json = await res.json();
-      if (json.success) setFiles(json.data);
-    } catch (error) {
-      console.error("Failed to fetch files", error);
+      if (json.success) {
+        setFiles(json.data);
+      }
+    } catch (err: unknown) {
+      console.error("Failed to fetch files", err);
     } finally {
       setLoading(false);
     }
-  };
+  }, [selectedFolder]);
 
   useEffect(() => {
-    fetchFiles();
-  }, [selectedFolder]);
+    loadFiles();
+  }, [loadFiles]);
 
   const handleUploadSuccess = (newFile: FileRecord) => {
     setFiles((prev) => [newFile, ...prev]);
@@ -84,10 +86,15 @@ export default function FilesPage() {
         const json = await res.json();
         throw new Error(json.error || "Failed to create ZIP");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       console.error(err);
     }
   };
+
+  const handleFileConvert = (newFile: FileRecord) => {
+    setFiles((prev) => [newFile, ...prev]);
+  };
+
 
   return (
     <div className="space-y-6">
@@ -107,7 +114,7 @@ export default function FilesPage() {
           </label>
           <FolderSelect value={selectedFolder} onChange={setSelectedFolder} />
         </div>
-        <UploadZone onUploadSuccess={handleUploadSuccess} />
+        <UploadZone onUploadSuccess={handleUploadSuccess} selectedFolder={selectedFolder} />
       </Card>
 
       {/* Selection bar */}
@@ -145,6 +152,7 @@ export default function FilesPage() {
         onClose={() => setSelectedFile(null)}
         onUpdate={handleFileUpdate}
         onDelete={handleFileDelete}
+        onConvert={handleFileConvert}
       />
     </div>
   );

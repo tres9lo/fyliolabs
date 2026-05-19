@@ -9,8 +9,12 @@
     "upload": "Pakia",
     "download": "Pakua",
     "loading": "Inapakia...",
+    "success": "Mafanikio",
+    "error": "Kosa",
     "settings": "Mipangilio",
     "dashboard": "Dashibodi",
+    "saveChanges": "Hifadhi Mabadiliko",
+    "resetForm": "Weka upya fomu",
     "files": "Faili",
     "folders": "Folda",
     "search": "Tafuta",
@@ -64,7 +68,9 @@
     "secure": "Tumia HTTPS kwa URL za Cloudinary",
     "resetForm": "Weka upya fomu",
     "saveChanges": "Hifadhi Mabadiliko",
-    "warning": "Yahusi yako ya Cloudinary huhifadhiwa kwa usalama, haitokezi kwenye kivinjari."
+    "warning": "Yahusi yako ya Cloudinary huhifadhiwa kwa usalama, haitokezi kwenye kivinjari.",
+    "language": "Lugha",
+    "selectLanguage": "Chagua lugha unayopenda"
   },
   "files": {
     "title": "Faili",

@@ -1,99 +1,107 @@
 import { createSupabaseServerClient } from "./server-supabase";
 import type { Folder, FolderCreateInput, FolderUpdateInput } from "@/types/folder";
 
+function withSupabase<T>(fn: (supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>) => Promise<T>): Promise<T> {
+  return (async () => {
+    const supabase = await createSupabaseServerClient();
+    return fn(supabase);
+  })();
+}
+
+// ─── reads ───────────────────────────────────────────────────────
+
 export async function getFolders(): Promise<Folder[]> {
-  const supabase = await createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  return withSupabase(async (supabase) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
 
-  if (!user) {
-    throw new Error("Unauthorized");
-  }
+    const { data: folders, error } = await supabase
+      .from("folders")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: false });
 
-  const { data: folders, error } = await supabase
-    .from("folders")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
-
-  if (error) throw error;
-  return folders as Folder[];
+    if (error) return [];
+    return (folders ?? []) as Folder[];
+  });
 }
 
 export async function getFolderTree(): Promise<Folder[]> {
-  const supabase = await createSupabaseServerClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  return withSupabase(async (supabase) => {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) return [];
 
-  if (!user) {
-    throw new Error("Unauthorized");
-  }
+    const { data: folders, error } = await supabase
+      .from("folders")
+      .select("*")
+      .eq("user_id", user.id)
+      .order("created_at", { ascending: true });
 
-  const { data: folders, error } = await supabase
-    .from("folders")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("created_at", { ascending: true });
+    if (error) return [];
 
-  if (error) throw error;
+    const folderList = (folders ?? []) as Folder[];
+    const map = new Map<string, Folder & { children: Folder[] }>();
+    const roots: Folder[] = [];
 
-  // Build tree recursively
-  const folderList = folders as Folder[];
-  const map = new Map<string, Folder>();
-  const roots: Folder[] = [];
+    folderList.forEach((folder) => {
+      map.set(folder.id, { ...folder, children: [] });
+    });
 
-  // Initialize map
-  folderList.forEach((folder) => {
-    map.set(folder.id, { ...folder, children: [] });
+    folderList.forEach((folder) => {
+      const node = map.get(folder.id)!;
+      if (folder.parent_id && map.has(folder.parent_id)) {
+        const parent = map.get(folder.parent_id)!;
+        parent.children = parent.children ?? [];
+        parent.children.push(node);
+      } else {
+        roots.push(node);
+      }
+    });
+
+    return roots;
   });
-
-  // Build tree
-  folderList.forEach((folder) => {
-    const node = map.get(folder.id)!;
-    if (folder.parent_id && map.has(folder.parent_id)) {
-      const parent = map.get(folder.parent_id)!;
-      parent.children = parent.children || [];
-      parent.children.push(node);
-    } else {
-      roots.push(node);
-    }
-  });
-
-  return roots;
 }
+
+// ─── writes ──────────────────────────────────────────────────────
 
 export async function createFolder(
   data: FolderCreateInput
 ): Promise<{ success: boolean; folder?: Folder; error?: string }> {
-  try {
-    const supabase = await createSupabaseServerClient();
+  return withSupabase(async (supabase) => {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) return { success: false, error: "Unauthorized" };
 
-    if (userError || !user) {
-      return { success: false, error: "Unauthorized" };
-    }
-
-    // If parent_id provided, verify ownership
     if (data.parent_id) {
       const { data: parent, error: parentError } = await supabase
         .from("folders")
         .select("id, user_id")
         .eq("id", data.parent_id)
         .single();
-
       if (parentError || !parent || parent.user_id !== user.id) {
         return { success: false, error: "Invalid parent folder" };
       }
     }
 
-    // Check for duplicate name in same parent
-    const { data: existing, error: dupError } = await supabase
-      .from("folders")
-      .select("id")
-      .eq("user_id", user.id)
-      .eq("name", data.name)
-      .eq("parent_id", data.parent_id ?? "")
-      .maybeSingle();
-
-    if (existing) {
+    // Duplicate check — avoid chained `maybeSingle()` on ternary
+    let maybeExisting: { data: Folder | null } | null = null;
+    if (data.parent_id) {
+      maybeExisting = await supabase
+        .from("folders")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("name", data.name)
+        .eq("parent_id", data.parent_id)
+        .maybeSingle();
+    } else {
+      maybeExisting = await supabase
+        .from("folders")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("name", data.name)
+        .is("parent_id", null)
+        .maybeSingle();
+    }
+    if (maybeExisting?.data) {
       return { success: false, error: "A folder with this name already exists" };
     }
 
@@ -108,153 +116,132 @@ export async function createFolder(
       .select()
       .single();
 
-    if (error) {
-      return { success: false, error: error.message };
-    }
-
+    if (error) return { success: false, error: error.message };
     return { success: true, folder: folder as Folder };
-  } catch (error: any) {
-    return { success: false, error: error.message || "Failed to create folder" };
-  }
+  });
 }
 
 export async function updateFolder(
   id: string,
   data: FolderUpdateInput
 ): Promise<{ success: boolean; folder?: Folder; error?: string }> {
-  try {
-    const supabase = await createSupabaseServerClient();
+  return withSupabase(async (supabase) => {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) return { success: false, error: "Unauthorized" };
 
-    if (userError || !user) {
-      return { success: false, error: "Unauthorized" };
-    }
-
-    // Get existing folder and verify ownership
     const { data: existing, error: fetchError } = await supabase
       .from("folders")
       .select("*")
       .eq("id", id)
       .single();
 
-    if (fetchError || !existing || existing.user_id !== user.id) {
+    if (fetchError || !existing) {
+      return { success: false, error: "Folder not found" };
+    }
+    if ((existing as Folder).user_id !== user.id) {
       return { success: false, error: "Folder not found" };
     }
 
-    // If moving to a different parent, validate parent
+    // Prevent moving into own descendants
     if (data.parent_id && data.parent_id !== existing.parent_id) {
-      // Prevent moving folder into its own descendants
-      if (isDescendant(id, data.parent_id, [])) {
+      const descendantIds = await getAllDescendantIds(supabase, id, user.id);
+      if (descendantIds.includes(data.parent_id)) {
         return { success: false, error: "Cannot move folder into its own descendant" };
       }
-
       const { data: parent, error: parentError } = await supabase
         .from("folders")
         .select("id, user_id")
         .eq("id", data.parent_id)
         .single();
-
       if (parentError || !parent || parent.user_id !== user.id) {
         return { success: false, error: "Invalid parent folder" };
       }
     }
 
-    // Check for duplicate name in same parent
+    // Duplicate name check
     if (data.name && data.name !== existing.name) {
-      const { data: duplicate, error: dupError } = await supabase
-        .from("folders")
-        .select("id")
-        .eq("user_id", user.id)
-        .eq("name", data.name)
-        .eq("parent_id", data.parent_id ?? existing.parent_id ?? "")
-        .neq("id", id)
-        .maybeSingle();
-
-      if (duplicate) {
+      const targetParentId = data.parent_id !== undefined ? data.parent_id : existing.parent_id;
+      let maybeDuplicate: { data: Folder | null } | null = null;
+      if (targetParentId) {
+        maybeDuplicate = await supabase
+          .from("folders")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("name", data.name)
+          .neq("id", id)
+          .eq("parent_id", targetParentId)
+          .maybeSingle();
+      } else {
+        maybeDuplicate = await supabase
+          .from("folders")
+          .select("id")
+          .eq("user_id", user.id)
+          .eq("name", data.name)
+          .neq("id", id)
+          .is("parent_id", null)
+          .maybeSingle();
+      }
+      if (maybeDuplicate?.data) {
         return { success: false, error: "A folder with this name already exists" };
       }
     }
 
-    const updatePayload: any = {};
+    const updatePayload: Record<string, unknown> = {};
     if (data.name !== undefined) updatePayload.name = data.name;
     if (data.description !== undefined) updatePayload.description = data.description;
     if (data.parent_id !== undefined) updatePayload.parent_id = data.parent_id;
+    updatePayload.updated_at = new Date().toISOString();
 
     const { data: folder, error } = await supabase
       .from("folders")
-      .update({
-        ...updatePayload,
-        updated_at: new Date().toISOString(),
-      })
+      .update(updatePayload)
       .eq("id", id)
       .select()
       .single();
 
-    if (error) {
-      return { success: false, error: error.message };
-    }
-
+    if (error) return { success: false, error: error.message };
     return { success: true, folder: folder as Folder };
-  } catch (error: any) {
-    return { success: false, error: error.message || "Failed to update folder" };
-  }
+  });
 }
 
 export async function deleteFolder(
   id: string
 ): Promise<{ success: boolean; error?: string }> {
-  try {
-    const supabase = await createSupabaseServerClient();
+  return withSupabase(async (supabase) => {
     const { data: { user }, error: userError } = await supabase.auth.getUser();
+    if (userError || !user) return { success: false, error: "Unauthorized" };
 
-    if (userError || !user) {
-      return { success: false, error: "Unauthorized" };
-    }
+    const descendantIds = await getAllDescendantIds(supabase, id, user.id);
+    const pathIds = descendantIds.length > 0 ? [id, ...descendantIds] : [id];
 
-    // Verify ownership and get all descendants
-    const descendentIds = await getAllDescendantIds(supabase, id, user.id);
-
-    // Check if folder has files
     const { data: files, error: filesError } = await supabase
       .from("files")
       .select("id")
-      .eq("folder_id", id)
+      .in("folder_id", pathIds)
       .limit(1);
 
-    if (!filesError && files && files.length > 0) {
-      return {
-        success: false,
-        error: "Cannot delete folder with files. Move or delete files first.",
-      };
+    if (!filesError && files && (files as unknown[]).length > 0) {
+      return { success: false, error: "Cannot delete folder with files. Move or delete files first." };
     }
 
-    // Include the folder itself
-    const allIds = [id, ...descendentIds];
-
-    // Delete recursively (will cascade to child folders via cascade rule? Not set in schema)
-    // We'll manually delete all
     const { error: deleteError } = await supabase
       .from("folders")
       .delete()
-      .in("id", allIds);
+      .in("id", pathIds);
 
-    if (deleteError) {
-      return { success: false, error: deleteError.message };
-    }
-
+    if (deleteError) return { success: false, error: deleteError.message };
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message || "Failed to delete folder" };
-  }
+  });
 }
 
+// ─── recursive helper ────────────────────────────────────────────
+
 async function getAllDescendantIds(
-  supabase: any,
+  supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>,
   parentId: string,
   userId: string
 ): Promise<string[]> {
   const ids: string[] = [];
-
   const { data: children, error } = await supabase
     .from("folders")
     .select("id")
@@ -262,26 +249,10 @@ async function getAllDescendantIds(
     .eq("user_id", userId);
 
   if (error || !children) return ids;
-
   for (const child of children as { id: string }[]) {
     ids.push(child.id);
-    const subChildren = await getAllDescendantIds(supabase, child.id, userId);
-    ids.push(...subChildren);
+    const sub = await getAllDescendantIds(supabase, child.id, userId);
+    ids.push(...sub);
   }
-
   return ids;
-}
-
-function isDescendant(
-  folderId: string,
-  targetParentId: string,
-  visited: string[]
-): boolean {
-  if (visited.includes(folderId)) return false; // prevent cycles
-
-  visited.push(folderId);
-  if (folderId === targetParentId) return true;
-
-  // Would need to fetch children; simplified: prevent self-parent only.
-  return false;
 }

@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import type { NextRequest } from "next/server";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 interface CookieToSet {
   name: string;
@@ -18,7 +19,7 @@ interface CookieToSet {
 export function createSupabaseClientForAPI(
   request: NextRequest,
   useServiceRole = false
-) {
+): { supabase: SupabaseClient; getCookiesToSet: () => CookieToSet[] } {
   const cookiesToSet: CookieToSet[] = [];
 
   const anonKey = useServiceRole

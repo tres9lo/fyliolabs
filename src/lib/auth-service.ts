@@ -40,8 +40,9 @@ export async function signUp(
     }
 
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message || "Signup failed" };
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
+    return { success: false, error: message };
   }
 }
 
@@ -57,8 +58,9 @@ export async function signIn(
 
     if (error) throw new Error(error.message);
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message || "Login failed" };
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
+    return { success: false, error: message };
   }
 }
 
@@ -69,7 +71,9 @@ export async function signOut(
     const { error } = await supabase.auth.signOut();
     if (error) throw new Error(error.message);
     return { success: true };
-  } catch (error: any) {
-    return { success: false, error: error.message || "Logout failed" };
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
+    return { success: false, error: message };
   }
 }
+

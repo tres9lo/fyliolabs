@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import {
-  Folder,
+  FolderOpen,
   ChevronRight,
   ChevronDown,
   Pencil,
@@ -76,7 +76,7 @@ function FolderItem({ folder, onRename, onDelete, depth = 0 }: FolderItemProps) 
           )}
         </button>
 
-        <Folder className="h-4 w-4 text-blue-500 flex-shrink-0" />
+        <FolderOpen className="h-4 w-4 text-blue-500 flex-shrink-0" />
 
         <span className="flex-1 text-sm text-gray-900 dark:text-white truncate">
           {folder.name}

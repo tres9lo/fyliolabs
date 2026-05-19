@@ -8,6 +8,7 @@ export interface ButtonProps
   isLoading?: boolean;
   fullWidth?: boolean;
   icon?: React.ReactNode;
+  size?: "sm" | "md";
 }
 
 const Button = forwardRef<HTMLButtonElement, ButtonProps>(
@@ -18,9 +19,11 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       isLoading = false,
       fullWidth = false,
       icon,
-      children,
-      disabled,
-      ...props
+    size,
+    children,
+    disabled,
+    ...props
+  
     },
     ref
   ) => {
@@ -39,7 +42,8 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       link: "bg-transparent text-primary-600 hover:underline dark:text-primary-500",
     };
 
-    const sizeStyles = "h-10 px-4 py-2";
+    const sizeMap = { sm: "h-9 px-3 text-sm", md: "h-10 px-4 py-2 text-base" };
+    const sizeStyles = sizeMap[size || "md"];
     const widthStyles = fullWidth ? "w-full" : "";
 
     return (
@@ -66,3 +70,4 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 Button.displayName = "Button";
 
 export default Button;
+export { Button };

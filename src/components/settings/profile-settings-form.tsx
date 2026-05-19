@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { profileUpdateSchema } from "@/types/profile";
 import { Save } from "lucide-react";
+import type { ProfileUpdateInput } from "@/types/profile";
 
 export function ProfileSettingsForm() {
   const [isLoading, setIsLoading] = useState(false);
@@ -66,7 +67,7 @@ export function ProfileSettingsForm() {
     loadProfile();
   }, [reset, addToast, tCommon]);
 
-  const onSubmit = async (data: any) => {
+  const onSubmit = async (data: ProfileUpdateInput) => {
     setIsLoading(true);
 
     try {
@@ -96,10 +97,10 @@ export function ProfileSettingsForm() {
           variant: "destructive",
         });
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       addToast({
         title: tCommon("error"),
-        description: err.message || "An error occurred",
+        description: err instanceof Error ? err.message : "An error occurred",
         variant: "destructive",
       });
     } finally {
@@ -231,3 +232,5 @@ export function ProfileSettingsForm() {
     </Card>
   );
 }
+
+export default ProfileSettingsForm;

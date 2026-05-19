@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createSupabaseClientForAPI } from "@/lib/supabase-api";
-import { deleteFolder, updateFolder } from "@/lib/folder-service";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 interface RouteParams {
   params: Promise<{ id: string }>;
@@ -34,9 +34,10 @@ export async function GET(request: NextRequest, { params }: RouteParams) {
     }
 
     return NextResponse.json({ success: true, data: folder });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to fetch folder" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
@@ -59,7 +60,7 @@ export async function PUT(
     }
 
     const body = await request.json();
-    const updates: any = {};
+    const updates: Record<string, unknown> = {};
 
     if (body.name !== undefined) updates.name = body.name;
     if (body.description !== undefined) updates.description = body.description;
@@ -69,14 +70,16 @@ export async function PUT(
 
     // Check for duplicate name in same parent
     if (body.name) {
-      const { data: existing } = await supabase
+      const targetParentId = body.parent_id !== undefined ? body.parent_id : await getParentId(supabase, id);
+      const dupQuery = supabase
         .from("folders")
         .select("id")
         .eq("user_id", user.id)
         .eq("name", body.name)
-        .eq("parent_id", body.parent_id ?? (await getParentId(supabase, id)))
-        .neq("id", id)
-        .maybeSingle();
+        .neq("id", id);
+      const { data: existing } = targetParentId
+        ? await dupQuery.eq("parent_id", targetParentId).maybeSingle()
+        : await dupQuery.is("parent_id", null).maybeSingle();
 
       if (existing) {
         return NextResponse.json(
@@ -102,16 +105,17 @@ export async function PUT(
     }
 
     return NextResponse.json({ success: true, data: folder });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to update folder" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
 }
 
 async function getParentId(
-  supabase: any,
+  supabase: SupabaseClient,
   folderId: string
 ): Promise<string | null> {
   const { data } = await supabase
@@ -185,16 +189,17 @@ export async function DELETE(
     }
 
     return NextResponse.json({ success: true, data: { deletedIds: allIds } });
-  } catch (error: any) {
+  } catch (error: unknown) {
+    const message = (error instanceof Error) ? error.message : "Unexpected error";
     return NextResponse.json(
-      { success: false, error: error.message || "Failed to delete folder" },
+      { success: false, error: message },
       { status: 500 }
     );
   }
 }
 
 async function getAllDescendantIds(
-  supabase: any,
+  supabase: SupabaseClient,
   parentId: string,
   userId: string
 ): Promise<string[]> {

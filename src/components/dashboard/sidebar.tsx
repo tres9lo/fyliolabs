@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { 
@@ -17,7 +18,7 @@ import { useTranslations } from "next-intl";
 import Logo from "@/components/ui/logo";
 
 const navigation = [
-  { key: "dashboard", href: "/dashboard", icon: Home },
+  { key: "dashboard", href: "/", icon: Home },
   { key: "files", href: "/files", icon: File },
   { key: "folders", href: "/folders", icon: FolderOpen },
   { key: "search", href: "/search", icon: Search },
@@ -30,8 +31,8 @@ export function Sidebar() {
 
   return (
     <aside className="w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 flex flex-col">
-      <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-        <Link href="/dashboard">
+       <div className="p-6 border-b border-gray-200 dark:border-gray-700">
+        <Link href="/">
           <Logo />
         </Link>
       </div>
