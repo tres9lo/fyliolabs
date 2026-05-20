@@ -18,6 +18,21 @@ export default function DashboardLayout({
     document.documentElement.classList.remove("sidebar-mobile-open");
   }, [pathname]);
 
+  // Click outside to close mobile sidebar
+  useEffect(() => {
+    const handleGlobalClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      if (document.documentElement.classList.contains("sidebar-mobile-open")) {
+        if (!target.closest("aside") && !target.closest("button[title='Toggle Menu']")) {
+          document.documentElement.classList.remove("sidebar-mobile-open");
+        }
+      }
+    };
+
+    window.addEventListener("click", handleGlobalClick);
+    return () => window.removeEventListener("click", handleGlobalClick);
+  }, []);
+
   return (
     <div className="min-h-screen bg-[var(--background)] flex">
       <Sidebar />

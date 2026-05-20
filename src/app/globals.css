@@ -184,17 +184,17 @@ html.dark .glass {
 /* ── Mobile & Responsive Design Media Queries ──────────────── */
 
 @media (max-width: 767px) {
-  /* Sidebar responsive sliding drawer */
+  /* Sidebar responsive sliding drawer (Floating on top of folder structures) */
   aside {
     position: fixed !important;
     top: 0;
     bottom: 0;
     left: 0;
     height: 100vh !important;
-    z-index: 100 !important;
+    z-index: 9999 !important;
     transform: translateX(-100%);
     transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.15) !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 8px 10px -6px rgba(0, 0, 0, 0.2) !important;
   }
 
   /* When mobile menu is active, reveal drawer */
@@ -209,9 +209,16 @@ html.dark .glass {
     inset: 0;
     background: rgba(0, 0, 0, 0.35);
     backdrop-filter: blur(4px);
-    z-index: 90;
+    z-index: 9998;
     pointer-events: auto;
     animation: fade-in 0.25s ease-out;
+  }
+
+  /* Notification dropdown responsiveness on ultra-narrow viewports */
+  .notification-dropdown {
+    width: calc(100vw - 2rem) !important;
+    max-width: 340px !important;
+    right: -1.5rem !important;
   }
 
   /* Microsoft Word Editor paper page padding optimization on mobile */

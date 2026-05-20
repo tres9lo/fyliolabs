@@ -124,12 +124,6 @@ export function TopBar() {
       </div>
 
       <div className="flex items-center gap-6">
-        {/* Quick search indicator */}
-        <button className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/50 dark:bg-black/20 border border-[var(--border)] text-xs font-medium text-gray-500 hover:text-primary-600 hover:border-primary-300 transition-all hover:shadow-sm">
-          <Search className="h-4 w-4" />
-          <span className="hidden sm:inline">Search... ⌘K</span>
-        </button>
-        
         <div className="relative" ref={notificationRef}>
           <button 
             onClick={toggleNotifications}
@@ -141,7 +135,7 @@ export function TopBar() {
 
           {/* Notifications Dropdown */}
           {showNotifications && (
-            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50">
+            <div className="absolute right-0 mt-2 w-80 bg-white dark:bg-gray-800 rounded-xl shadow-xl border border-gray-100 dark:border-gray-700 overflow-hidden z-50 notification-dropdown">
               <div className="p-3 border-b border-gray-100 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/50">
                 <h3 className="font-semibold text-sm text-gray-900 dark:text-white">Recent Activity</h3>
               </div>
