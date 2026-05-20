@@ -95,13 +95,38 @@ export function TopBar() {
   const pageTitle = t(pageTitleKey);
   const fullName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "";
 
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const mainElement = document.querySelector("main");
+    if (!mainElement) return;
+
+    let lastScroll = 0;
+    const handleScroll = () => {
+      const currentScroll = mainElement.scrollTop;
+      if (currentScroll <= 10) {
+        setVisible(true);
+      } else if (currentScroll > lastScroll) {
+        // Scrolling down -> hide
+        setVisible(false);
+      } else {
+        // Scrolling up -> reveal
+        setVisible(true);
+      }
+      lastScroll = currentScroll;
+    };
+
+    mainElement.addEventListener("scroll", handleScroll, { passive: true });
+    return () => mainElement.removeEventListener("scroll", handleScroll);
+  }, []);
+
   const toggleMobileSidebar = () => {
     setShowNotifications(false);
     document.documentElement.classList.toggle("sidebar-mobile-open");
   };
 
   return (
-    <header className="h-16 px-4 md:px-8 flex items-center justify-between border-b border-white/20 dark:border-white/10 glass z-10 sticky top-0 shadow-sm backdrop-blur-2xl">
+    <header className={`h-16 px-4 md:px-8 flex items-center justify-between border-b border-white/20 dark:border-white/10 glass z-40 sticky top-0 shadow-sm backdrop-blur-2xl transition-transform duration-300 ease-in-out ${visible ? "translate-y-0" : "-translate-y-full"}`}>
       {/* Breadcrumb & Mobile Menu Trigger */}
       <div className="flex items-center gap-2 text-sm">
         <button
