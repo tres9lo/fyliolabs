@@ -100,9 +100,18 @@ export function TopBar() {
   useEffect(() => {
     let lastScroll = 0;
     const handleScroll = (e: Event) => {
-      const target = e.target as HTMLElement;
-      if (!target || typeof target.scrollTop === "undefined") return;
-      const currentScroll = target.scrollTop;
+      const target = e.target;
+      if (!target) return;
+
+      // Capture scroll position universally across local elements and window documents
+      let currentScroll = 0;
+      if (target === document || target === window) {
+        currentScroll = window.scrollY || document.documentElement.scrollTop || document.body.scrollTop;
+      } else {
+        const element = target as HTMLElement;
+        if (element.scrollTop === undefined) return;
+        currentScroll = element.scrollTop;
+      }
       
       if (currentScroll <= 15) {
         setVisible(true);

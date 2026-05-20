@@ -103,6 +103,12 @@ export default function RegisterForm() {
         <Button type="submit" className="w-full" isLoading={isLoading}>
           {t("createAccount")}
         </Button>
+        <p className="mt-4 text-xs text-center text-gray-500 dark:text-gray-400">
+          By registering, you agree to our{" "}
+          <a href="/terms" className="underline hover:text-primary-500 transition-colors">Terms & Conditions</a>{" "}
+          and{" "}
+          <a href="/privacy" className="underline hover:text-primary-500 transition-colors">Privacy Policy</a>.
+        </p>
       </form>
     </Card>
   );
