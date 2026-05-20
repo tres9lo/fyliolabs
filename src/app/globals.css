@@ -180,3 +180,53 @@ html.dark .glass {
   background: var(--surface);
   border: 1px solid var(--border);
 }
+
+/* ── Mobile & Responsive Design Media Queries ──────────────── */
+
+@media (max-width: 767px) {
+  /* Sidebar responsive sliding drawer */
+  aside {
+    position: fixed !important;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    height: 100vh !important;
+    z-index: 100 !important;
+    transform: translateX(-100%);
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 8px 10px -6px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  /* When mobile menu is active, reveal drawer */
+  html.sidebar-mobile-open aside {
+    transform: translateX(0) !important;
+  }
+
+  /* Elegant blur overlay backdrop over content when drawer is open */
+  html.sidebar-mobile-open::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(4px);
+    z-index: 90;
+    pointer-events: auto;
+    animation: fade-in 0.25s ease-out;
+  }
+
+  /* Microsoft Word Editor paper page padding optimization on mobile */
+  .word-editor-canvas {
+    padding: 1.25rem !important;
+    min-height: 400px !important;
+  }
+
+  /* Form columns collapsing */
+  .grid-cols-2 {
+    grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+  }
+
+  /* Custom responsiveness for dashboard grids */
+  .p-14 {
+    padding: 1.25rem !important;
+  }
+}

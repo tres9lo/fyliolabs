@@ -95,10 +95,25 @@ export function TopBar() {
   const pageTitle = t(pageTitleKey);
   const fullName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "";
 
+  const toggleMobileSidebar = () => {
+    document.documentElement.classList.toggle("sidebar-mobile-open");
+  };
+
   return (
-    <header className="h-16 px-8 flex items-center justify-between border-b border-white/20 dark:border-white/10 glass z-10 sticky top-0 shadow-sm backdrop-blur-2xl">
-      {/* Breadcrumb */}
+    <header className="h-16 px-4 md:px-8 flex items-center justify-between border-b border-white/20 dark:border-white/10 glass z-10 sticky top-0 shadow-sm backdrop-blur-2xl">
+      {/* Breadcrumb & Mobile Menu Trigger */}
       <div className="flex items-center gap-2 text-sm">
+        <button
+          onClick={toggleMobileSidebar}
+          className="md:hidden p-1.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-800 text-gray-500 dark:text-gray-400 transition-colors mr-1 cursor-pointer"
+          title="Toggle Menu"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-5 w-5">
+            <line x1="4" x2="20" y1="12" y2="12" />
+            <line x1="4" x2="20" y1="6" y2="6" />
+            <line x1="4" x2="20" y1="18" y2="18" />
+          </svg>
+        </button>
         <span className="text-gray-500 dark:text-gray-400 font-medium tracking-wide">Fyliolabs</span>
         {pathname !== "/" && (
           <>
