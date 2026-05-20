@@ -25,14 +25,14 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://objective-dev.vercel.app"),
+  metadataBase: new URL("https://fyliolabs.vercel.app"),
   alternates: {
     canonical: "/",
   },
   openGraph: {
     title: "Fyliolabs - Secure Cloud File Orchestration",
     description: "Experience premium, secure multi-tenant cloud storage, document workspace creation, and file conversion orchestration. Built for modern builders by Objective-Dev.",
-    url: "https://objective-dev.vercel.app",
+    url: "https://fyliolabs.vercel.app",
     siteName: "Fyliolabs",
     images: [
       {

@@ -230,3 +230,50 @@ html.dark .glass {
     padding: 1.25rem !important;
   }
 }
+
+/* ── Global Small Screen & Mobile Enhancements ──────────────── */
+
+@media (max-width: 640px) {
+  /* Dynamic text scale scaling for smaller screens */
+  h1 {
+    font-size: 1.75rem !important;
+    line-height: 2.25rem !important;
+  }
+  h2 {
+    font-size: 1.35rem !important;
+    line-height: 1.85rem !important;
+  }
+  h3 {
+    font-size: 1.15rem !important;
+    line-height: 1.65rem !important;
+  }
+
+  /* Safe container paddings to preserve maximum screen real estate */
+  .p-8, .p-16, .glass.p-8 {
+    padding: 1.25rem !important;
+  }
+
+  /* Prevent horizontal layout breaks via table container scrolls */
+  table, .table-container {
+    display: block !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    -webkit-overflow-scrolling: touch !important;
+  }
+
+  /* Flex button clusters wrapping on narrow displays */
+  .flex.gap-3, .flex.gap-4, .flex-wrap {
+    flex-wrap: wrap !important;
+    gap: 0.5rem !important;
+  }
+
+  /* Prevent unwanted viewport scaling/zooming on Safari iOS focus states */
+  input, select, textarea {
+    font-size: 16px !important;
+  }
+
+  /* Side panels and sliding drawers fit */
+  .max-w-lg {
+    max-width: 100% !important;
+  }
+}
