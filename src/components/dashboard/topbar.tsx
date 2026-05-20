@@ -96,6 +96,7 @@ export function TopBar() {
   const fullName = user?.user_metadata?.full_name || user?.email?.split("@")[0] || "";
 
   const toggleMobileSidebar = () => {
+    setShowNotifications(false);
     document.documentElement.classList.toggle("sidebar-mobile-open");
   };
 

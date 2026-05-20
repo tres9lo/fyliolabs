@@ -54,9 +54,22 @@ export function Sidebar() {
             <Logo />
           </Link>
         )}
+        
+        {/* Mobile Close Button (explicit hide button) */}
+        <button
+          onClick={() => document.documentElement.classList.remove("sidebar-mobile-open")}
+          className="md:hidden p-1.5 rounded-xl text-gray-500 hover:bg-gray-100 dark:hover:bg-gray-800 hover:text-red-500 transition-colors cursor-pointer"
+          title="Close Menu"
+        >
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" className="h-4.5 w-4.5">
+            <line x1="18" x2="6" y1="6" y2="18" />
+            <line x1="6" x2="18" y1="6" y2="18" />
+          </svg>
+        </button>
+
         <button
           onClick={() => setCollapsed((p) => !p)}
-          className="p-1.5 rounded-xl text-gray-500 hover:bg-white dark:hover:bg-gray-800 hover:text-primary-600 dark:hover:text-primary-400 transition-all hover:shadow-sm ml-auto"
+          className="hidden md:inline-flex p-1.5 rounded-xl text-gray-500 hover:bg-white dark:hover:bg-gray-800 hover:text-primary-600 dark:hover:text-primary-400 transition-all hover:shadow-sm ml-auto"
         >
           {collapsed ? <Menu className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
         </button>
