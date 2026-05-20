@@ -41,7 +41,7 @@ export function Sidebar() {
   return (
     <aside
       className={cn(
-        "flex-shrink-0 flex flex-col border-r border-white/20 dark:border-white/10 z-20",
+        "dashboard-sidebar flex-shrink-0 flex flex-col border-r border-white/20 dark:border-white/10 z-20",
         "glass shadow-sm backdrop-blur-2xl",
         "transition-all duration-300",
         collapsed ? "w-[72px]" : "w-[260px]"

@@ -190,7 +190,7 @@ html.dark .glass {
   }
 
   /* Sidebar responsive sliding drawer (Floating absolute above all folder trees) */
-  aside {
+  .dashboard-sidebar {
     position: fixed !important;
     top: 0;
     bottom: 0;
@@ -203,7 +203,7 @@ html.dark .glass {
   }
 
   /* When mobile menu is active, reveal drawer */
-  html.sidebar-mobile-open aside {
+  html.sidebar-mobile-open .dashboard-sidebar {
     transform: translateX(0) !important;
   }
 
@@ -219,11 +219,15 @@ html.dark .glass {
     animation: fade-in 0.25s ease-out;
   }
 
-  /* Notification dropdown responsiveness on ultra-narrow viewports */
+  /* Center-align notification dropdown dynamically on mobile viewports */
   .notification-dropdown {
+    position: fixed !important;
+    top: 4.5rem !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
     width: calc(100vw - 2rem) !important;
-    max-width: 340px !important;
-    right: -1.5rem !important;
+    max-width: 360px !important;
   }
 
   /* Microsoft Word Editor paper page padding optimization on mobile */
