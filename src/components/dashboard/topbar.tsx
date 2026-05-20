@@ -98,13 +98,13 @@ export function TopBar() {
   const [visible, setVisible] = useState(true);
 
   useEffect(() => {
-    const mainElement = document.querySelector("main");
-    if (!mainElement) return;
-
     let lastScroll = 0;
-    const handleScroll = () => {
-      const currentScroll = mainElement.scrollTop;
-      if (currentScroll <= 10) {
+    const handleScroll = (e: Event) => {
+      const target = e.target as HTMLElement;
+      if (!target || typeof target.scrollTop === "undefined") return;
+      const currentScroll = target.scrollTop;
+      
+      if (currentScroll <= 15) {
         setVisible(true);
       } else if (currentScroll > lastScroll) {
         // Scrolling down -> hide
@@ -116,8 +116,8 @@ export function TopBar() {
       lastScroll = currentScroll;
     };
 
-    mainElement.addEventListener("scroll", handleScroll, { passive: true });
-    return () => mainElement.removeEventListener("scroll", handleScroll);
+    window.addEventListener("scroll", handleScroll, { capture: true, passive: true });
+    return () => window.removeEventListener("scroll", handleScroll, { capture: true });
   }, []);
 
   const toggleMobileSidebar = () => {

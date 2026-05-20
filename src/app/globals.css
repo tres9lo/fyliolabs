@@ -208,15 +208,9 @@ html.dark .glass {
   }
 
   /* Elegant blur overlay backdrop over content when drawer is open */
-  html.sidebar-mobile-open::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(4px);
-    z-index: 99999;
-    pointer-events: auto;
-    animation: fade-in 0.25s ease-out;
+  html.sidebar-mobile-open .sidebar-mobile-overlay {
+    opacity: 1 !important;
+    pointer-events: auto !important;
   }
 
   /* Center-align notification dropdown dynamically on mobile viewports */

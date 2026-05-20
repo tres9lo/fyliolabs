@@ -100,11 +100,12 @@ export function Sidebar() {
             </Link>
           );
         })}
+        
+        {/* Logout Button moved upwards inside scrollable nav */}
+        <div className="pt-4 mt-4 border-t border-[var(--border)]">
+          <LogoutButton collapsed={collapsed} />
+        </div>
       </nav>
-
-      <div className="p-4 border-t border-[var(--border)]">
-        <LogoutButton collapsed={collapsed} />
-      </div>
     </aside>
   );
 }
